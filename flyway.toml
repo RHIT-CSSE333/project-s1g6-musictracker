@@ -1,7 +1,21 @@
 # More information on the parameters can be found here: https://documentation.red-gate.com/flyway/flyway-cli-and-api/configuration/parameters
 
-[environments.dev]
-url = "jdbc:sqlserver://golem.csse.rose-hulman.edu;databaseName=MusicTracker;encrypt=false"
+[environments.halseysh]
+url = "jdbc:sqlserver://golem.csse.rose-hulman.edu;databaseName=MusicTracker-halseysh;encrypt=false"
+
+[environments.deckerct]
+url = "jdbc:sqlserver://golem.csse.rose-hulman.edu;databaseName=MusicTracker-deckerct;encrypt=false"
+
+[environments.steimlj]
+url = "jdbc:sqlserver://golem.csse.rose-hulman.edu;databaseName=MusicTracker-steimlj;encrypt=false"
+
+[environments.integration]
+url = "jdbc:sqlserver://golem.csse.rose-hulman.edu;databaseName=MusicTracker-integration;encrypt=false"
+
+[environments.demo]
+url = "jdbc:sqlserver://golem.csse.rose-hulman.edu;databaseName=MusicTrackerS1G6;encrypt=false"
+
 
 [flyway]
 locations = ["filesystem:migrations"]
+
