@@ -1,6 +1,3 @@
-USE [MusicTracker-halseysh]
-GO
-
 IF(NOT EXISTS (SELECT su.name as DatabaseUser
 FROM sys.sysusers su
 join sys.syslogins sl on sl.sid = su.sid
