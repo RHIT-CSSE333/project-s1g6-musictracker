@@ -1,17 +1,31 @@
-IF(NOT EXISTS (Select 1 FROM sys.syslogins WHERE USER = 'deckerct'))
+USE [MusicTracker-halseysh]
+GO
+
+IF(NOT EXISTS (SELECT su.name as DatabaseUser
+FROM sys.sysusers su
+join sys.syslogins sl on sl.sid = su.sid
+where sl.name = 'deckerct'))
 BEGIN
 CREATE USER deckerct FROM LOGIN deckerct; 
 exec sp_addrolemember 'db_owner', 'deckerct'; 
 END
 
-IF(NOT EXISTS (Select 1 FROM sys.syslogins WHERE USER = 'steimlj'))
+IF(NOT EXISTS (SELECT su.name as DatabaseUser
+FROM sys.sysusers su
+join sys.syslogins sl on sl.sid = su.sid
+where sl.name = 'steimlj'))
 BEGIN
 CREATE USER steimlj FROM LOGIN steimlj; 
 exec sp_addrolemember 'db_owner', 'steimlj'; 
 END
 
-IF(NOT EXISTS (Select 1 FROM sys.syslogins WHERE USER = 'halseysh'))
+IF(NOT EXISTS (SELECT su.name as DatabaseUser
+FROM sys.sysusers su
+join sys.syslogins sl on sl.sid = su.sid
+where sl.name = 'halseysh'))
 BEGIN
 CREATE USER halseysh FROM LOGIN halseysh; 
 exec sp_addrolemember 'db_owner', 'halseysh'; 
 END
+
+GO
