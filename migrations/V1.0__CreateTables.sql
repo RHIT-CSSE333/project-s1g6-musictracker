@@ -2,6 +2,11 @@ CREATE TABLE Users(
 	UserID int IDENTITY(1, 1) PRIMARY KEY,
 	Username varchar(20),
 	[Name] varchar(30),
+)
+
+CREATE TABLE Login(
+	UserID int PRIMARY KEY REFERENCES Users(UserID),
+	Username varchar(20),
 	PasswordSalt varchar(60),
 	PasswordHash varchar(60)
 )
@@ -77,13 +82,15 @@ BEGIN
 		Print 'PasswordHash cannot be null or empty.';
 		RETURN 3
 	END
-	IF EXISTS(SELECT * FROM [User] WHERE Username = @Username)
+	IF EXISTS(SELECT * FROM [Login] WHERE Username = @Username)
 	BEGIN
       PRINT 'Error: Username already exists.';
 	  RETURN 4
 	END
-	INSERT INTO [User](Username, [Name], PasswordSalt, PasswordHash)
-	VALUES (@Username, @Name, @PasswordSalt, @PasswordHash)
+	INSERT INTO [User](Username, [Name])
+	VALUES (@Username, @Name)
+	INSERT INTO [Login](UserID, Username, PasswordSalt, PasswordHash)
+	VALUES (@@IDENTITY, @Username, @PasswordSalt, @PasswordHash)
 END
 GO
 
