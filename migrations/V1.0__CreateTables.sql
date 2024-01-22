@@ -1,14 +1,9 @@
 CREATE TABLE Users(
-	UserID int PRIMARY KEY,
+	UserID int IDENTITY(1, 1) PRIMARY KEY,
 	Username varchar(20),
 	[Name] varchar(30),
-)
-
-CREATE TABLE Login(
-	UserID int PRIMARY KEY,
-	Username varchar(20),
-	PasswordHash varchar(60),
-	PasswordSalt varchar(60)
+	PasswordSalt varchar(60),
+	PasswordHash varchar(60)
 )
 
 CREATE TABLE Song(
@@ -58,5 +53,38 @@ CREATE TABLE SongInPlaylist(
 	PlaylistID int REFERENCES Playlist(PlaylistID),
 	PRIMARY KEY(SongID, PlaylistID)
 )
+
+CREATE PROCEDURE Register
+	@Username nvarchar(50),
+	@Name nvarchar(100),
+	@PasswordSalt varchar(60),
+	@PasswordHash varchar(60)
+AS
+BEGIN
+	if @Username is null or @Username = ''
+	BEGIN
+		Print 'Username cannot be null or empty.';
+		RETURN 1
+	END
+	-- *do* allow the user's actual name to be empty just in case
+	if @PasswordSalt is null or @PasswordSalt = ''
+	BEGIN
+		Print 'PasswordSalt cannot be null or empty.';
+		RETURN 2
+	END
+	if @PasswordHash is null or @PasswordHash = ''
+	BEGIN
+		Print 'PasswordHash cannot be null or empty.';
+		RETURN 3
+	END
+	IF EXISTS(SELECT * FROM [User] WHERE Username = @Username)
+	BEGIN
+      PRINT 'Error: Username already exists.';
+	  RETURN 4
+	END
+	INSERT INTO [User](Username, [Name], PasswordSalt, PasswordHash)
+	VALUES (@Username, @Name, @PasswordSalt, @PasswordHash)
+END
+GO
 
 GO
