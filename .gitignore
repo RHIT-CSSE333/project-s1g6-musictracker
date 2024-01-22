@@ -1,1 +1,6 @@
 /bin/
+
+# Xcode and macOS stuff
+.DS_Store
+*.xcodeproj/
+*.xcworkspace/
