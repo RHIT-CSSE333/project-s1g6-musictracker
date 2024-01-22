@@ -4,6 +4,13 @@ CREATE TABLE Users(
 	[Name] varchar(30),
 )
 
+CREATE TABLE Login(
+	UserID int PRIMARY KEY,
+	Username varchar(20),
+	PasswordHash varchar(60),
+	PasswordSalt varchar(60)
+)
+
 CREATE TABLE Song(
 	SongID nvarchar(50) PRIMARY KEY,
 	SongTitle nvarchar(200),
