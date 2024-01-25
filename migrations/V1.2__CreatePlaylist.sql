@@ -1,10 +1,8 @@
-USE [MusicTracker-halseysh]
-GO
-
 CREATE OR ALTER PROCEDURE [dbo].[CreatePlaylist]
 	@userID int,
 	@playlistName nvarchar(30)
 AS
+BEGIN
 	if @userID is null OR @userID = ''
 	BEGIN
 		PRINT 'ERROR: User ID cannot be null or empty';
@@ -28,4 +26,5 @@ AS
 	INSERT INTO Playlist
 	VALUES(@userID, @playlistName, '00:00:00.0000000');
 
-	GO
+	
+END

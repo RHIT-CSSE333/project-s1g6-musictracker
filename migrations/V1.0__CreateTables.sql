@@ -15,10 +15,10 @@ CREATE TABLE Song(
 	SongID nvarchar(50) PRIMARY KEY,
 	SongTitle nvarchar(200),
 	AlbumID nvarchar(50),
-	Genre varchar(20),
-	SongReleaseDate DATE, 
-	[Length] TIME,
-	BPM int
+	Genre varchar(100),
+	SongReleaseDate varchar(20), 
+	[Length] int,
+	BPM double(18,3)
 )
 
 CREATE TABLE Artist(
@@ -27,18 +27,18 @@ CREATE TABLE Artist(
 )
 
 CREATE TABLE Album(
-	AlbumID int IDENTITY(1, 1) PRIMARY KEY ,
+	AlbumID nvarchar(50) PRIMARY KEY ,
 	UserID int REFERENCES Users(UserID),
-	AlbumName varchar(30),
+	AlbumName varchar(200),
 	ReleaseDate date,
-	[Length] time
+	[Length] int
 )
 
 CREATE TABLE Playlist(
 	PlaylistID int IDENTITY(1, 1) PRIMARY KEY, 
 	UserID int REFERENCES Users(UserID),
-	PlaylistName varchar(30),
-	PlaylistLength time
+	PlaylistName varchar(200),
+	PlaylistLength int
 )
 
 CREATE TABLE SongMadeBy(
@@ -59,39 +59,6 @@ CREATE TABLE SongInPlaylist(
 	PRIMARY KEY(SongID, PlaylistID)
 )
 
-CREATE PROCEDURE Register
-	@Username nvarchar(50),
-	@Name nvarchar(100),
-	@PasswordSalt varchar(60),
-	@PasswordHash varchar(60)
-AS
-BEGIN
-	if @Username is null or @Username = ''
-	BEGIN
-		Print 'Username cannot be null or empty.';
-		RETURN 1
-	END
-	-- *do* allow the user's actual name to be empty just in case
-	if @PasswordSalt is null or @PasswordSalt = ''
-	BEGIN
-		Print 'PasswordSalt cannot be null or empty.';
-		RETURN 2
-	END
-	if @PasswordHash is null or @PasswordHash = ''
-	BEGIN
-		Print 'PasswordHash cannot be null or empty.';
-		RETURN 3
-	END
-	IF EXISTS(SELECT * FROM [Login] WHERE Username = @Username)
-	BEGIN
-      PRINT 'Error: Username already exists.';
-	  RETURN 4
-	END
-	INSERT INTO [User](Username, [Name])
-	VALUES (@Username, @Name)
-	INSERT INTO [Login](UserID, Username, PasswordSalt, PasswordHash)
-	VALUES (@@IDENTITY, @Username, @PasswordSalt, @PasswordHash)
-END
-GO
+
 
 GO

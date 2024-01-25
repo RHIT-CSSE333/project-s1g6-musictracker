@@ -22,8 +22,8 @@ public class Main {
             connection = DriverManager.getConnection(jdbcURL);
             connection.setAutoCommit(false);
  
-            String sql = "INSERT INTO Song VALUES (?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement statement = connection.prepareStatement(sql);
+            String insertQuery = "INSERT INTO Song VALUES (?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
  
             BufferedReader lineReader = new BufferedReader(new FileReader(csvFilePath));
             String lineText = null;
@@ -54,19 +54,18 @@ public class Main {
                 String Length = data[22];
                 String BPM = data[21];
  
-                statement.setString(1, id.toString());
-                statement.setString(2, SongTitle);             
-                statement.setString(3, AlbumID);
-                statement.setString(4, Genre);
-                statement.setDate(5, null);
-
-                statement.setString(6, null);
-                statement.setInt(7, 0);
+                insertStatement.setString(1, id.toString());
+                insertStatement.setString(2, SongTitle);             
+                insertStatement.setString(3, AlbumID);
+                insertStatement.setString(4, Genre);
+                insertStatement.setDate(5, null);
+                insertStatement.setString(6, null);
+                insertStatement.setInt(7, 0);
  
-                statement.addBatch();
+                insertStatement.addBatch();
  
                 if (count % batchSize == 0) {
-                    statement.executeBatch();
+                    insertStatement.executeBatch();
                 }
               id++;
             }
@@ -74,7 +73,7 @@ public class Main {
             lineReader.close();
  
             // execute the remaining queries
-            statement.executeBatch();
+            insertStatement.executeBatch();
  
             connection.commit();
             connection.close();
