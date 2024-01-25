@@ -26,5 +26,3 @@ INSERT INTO [SongInPlaylist]
 VALUES(@SongID,@PlaylistID)
 
 END
-
-exec AddSongToPlaylist 'Cool Music', 'Nostalgic'

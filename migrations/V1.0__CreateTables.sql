@@ -15,10 +15,9 @@ CREATE TABLE Song(
 	SongID nvarchar(50) PRIMARY KEY,
 	SongTitle nvarchar(200),
 	AlbumID nvarchar(50),
-	Genre varchar(100),
-	SongReleaseDate varchar(20), 
+	Genre varchar(100), 
 	[Length] int,
-	BPM double(18,3)
+	BPM decimal(18,3)
 )
 
 CREATE TABLE Artist(
@@ -28,9 +27,8 @@ CREATE TABLE Artist(
 
 CREATE TABLE Album(
 	AlbumID nvarchar(50) PRIMARY KEY ,
-	UserID int REFERENCES Users(UserID),
 	AlbumName varchar(200),
-	ReleaseDate date,
+	ReleaseDate varchar(20),
 	[Length] int
 )
 
@@ -49,7 +47,7 @@ CREATE TABLE SongMadeBy(
 
 CREATE TABLE AlbumReleasedBy(
 	ArtistID int REFERENCES Artist(ArtistID),
-	AlbumID int REFERENCES Album(AlbumID),
+	AlbumID nvarchar(50) REFERENCES Album(AlbumID),
 	PRIMARY KEY(ArtistID, AlbumID)
 )
 

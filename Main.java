@@ -9,7 +9,7 @@ import java.util.Locale;
 public class Main {
  
     public static void main(String[] args) throws ParseException {
-        String jdbcURL = "jdbc:sqlserver://golem.csse.rose-hulman.edu;databaseName=MusicTrackerS1G6;user=deckerct;password={RedParade2023}";
+        String jdbcURL = "jdbc:sqlserver://golem.csse.rose-hulman.edu;databaseName=MusicTracker-deckerct;user=deckerct;password={RedParade2023}";
  
         String csvFilePath = "Songs-short.txt";
  
@@ -24,10 +24,14 @@ public class Main {
  
             String insertQuery = "INSERT INTO Song VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
- 
+
+            CallableStatement insertAlbum = connection.prepareCall("{CALL [InsertAlbum](?,?,?)}");
+            CallableStatement insertArtist = connection.prepareCall("{CALL [InsertArtist](?)}");
+            CallableStatement insertSongArtist = connection.prepareCall("{CALL [InsertSongArtist](?,?)}");
+            CallableStatement insertAlbumArtist = connection.prepareCall("{CALL [InsertAlbumArtist](?,?)}");
+
             BufferedReader lineReader = new BufferedReader(new FileReader(csvFilePath));
             String lineText = null;
-            SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yy");
 
             int count = 0;
  
@@ -39,33 +43,47 @@ public class Main {
                 String[] data = lineText.split("\\t");
                 String SongID = data[0];
                 String SongTitle = data[1];
-                //System.out.println(SongTitle);
+                String ArtistName = data[2];
                 String AlbumID = data[4];
-                //System.out.println(AlbumID);
+                String AlbumTitle = data[5];
                 String Genre = data[9];
-                //System.out.println(Genre);
-                
-              
-                
-//                java.sql.Date songReleaseDate = new java.sql.Date(formatter.parse(data[6]).getTime());
-//                java.sql.Date sqlSongReleaseDate = new java.sql.Date(songReleaseDate.getTime());
-                
-           
-                String Length = data[22];
-                String BPM = data[21];
+                String Date = data[6];
+                Integer Length = Integer.valueOf(data[22]);
+                Double BPM = Double.valueOf(data[21]);
  
-                insertStatement.setString(1, id.toString());
+                insertStatement.setString(1, SongID);
                 insertStatement.setString(2, SongTitle);             
                 insertStatement.setString(3, AlbumID);
                 insertStatement.setString(4, Genre);
-                insertStatement.setDate(5, null);
-                insertStatement.setString(6, null);
-                insertStatement.setInt(7, 0);
+                insertStatement.setString(5, Date);
+                insertStatement.setInt(6, Length);
+                insertStatement.setDouble(7,BPM);
+
+                insertAlbum.setString(1,AlbumID);
+                insertAlbum.setString(2,AlbumTitle);
+                insertAlbum.setString(3,Date);
+
+                insertArtist.setString(1,ArtistName);
+
+                insertSongArtist.setString(1,ArtistName);
+                insertSongArtist.setString(2,SongID);
+
+                insertAlbumArtist.setString(1,ArtistName);
+                insertAlbumArtist.setString(2,AlbumID);
+
  
                 insertStatement.addBatch();
+                insertAlbum.addBatch();
+                insertArtist.addBatch();
+                insertSongArtist.addBatch();
+                insertAlbumArtist.addBatch();
  
                 if (count % batchSize == 0) {
                     insertStatement.executeBatch();
+                    insertAlbum.executeBatch();
+                    insertArtist.executeBatch();
+                    insertSongArtist.executeBatch();
+                    insertAlbumArtist.executeBatch();
                 }
               id++;
             }
@@ -74,6 +92,10 @@ public class Main {
  
             // execute the remaining queries
             insertStatement.executeBatch();
+            insertAlbum.executeBatch();
+            insertArtist.executeBatch();
+            insertSongArtist.executeBatch();
+            insertAlbumArtist.executeBatch();
  
             connection.commit();
             connection.close();
