@@ -1,7 +1,7 @@
 CREATE PROCEDURE Register
 	@Username nvarchar(50),
 	@Name nvarchar(100),
-	@PasswordSalt varchar(60),
+	-- @PasswordSalt varchar(60),
 	@PasswordHash varchar(60)
 AS
 BEGIN
@@ -11,11 +11,11 @@ BEGIN
 		RETURN 1
 	END
 	-- *do* allow the user's actual name to be empty just in case
-	if @PasswordSalt is null or @PasswordSalt = ''
-	BEGIN
-		Print 'PasswordSalt cannot be null or empty.';
-		RETURN 2
-	END
+	-- if @PasswordSalt is null or @PasswordSalt = ''
+	-- BEGIN
+		-- Print 'PasswordSalt cannot be null or empty.';
+		-- RETURN 2
+	-- END
 	if @PasswordHash is null or @PasswordHash = ''
 	BEGIN
 		Print 'PasswordHash cannot be null or empty.';
@@ -28,7 +28,24 @@ BEGIN
 	END
 	INSERT INTO [User](Username, [Name])
 	VALUES (@Username, @Name)
-	INSERT INTO [Login](UserID, Username, PasswordSalt, PasswordHash)
-	VALUES (@@IDENTITY, @Username, @PasswordSalt, @PasswordHash)
+	INSERT INTO [Login](UserID, Username,
+		-- PasswordSalt,
+	PasswordHash) VALUES (@@IDENTITY, @Username,
+		-- @PasswordSalt,
+		@PasswordHash)
+END
+GO
+
+CREATE PROCEDURE TempLogin
+	@Username nvarchar(50),
+	@PasswordHash varchar(60)
+AS
+BEGIN
+	IF NOT EXISTS(SELECT * FROM [Login] WHERE Username = @Username AND PasswordHash = @PasswordHash)
+	BEGIN
+      PRINT 'Login failed!';
+	  RETURN 1
+	END
+	RETURN 0
 END
 GO
