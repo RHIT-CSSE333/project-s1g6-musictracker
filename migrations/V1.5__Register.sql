@@ -1,4 +1,4 @@
-CREATE PROCEDURE Register
+CREATE OR ALTER PROCEDURE Register
 	@Username nvarchar(50),
 	@Name nvarchar(100),
 	-- @PasswordSalt varchar(60),
@@ -26,7 +26,7 @@ BEGIN
       PRINT 'Error: Username already exists.';
 	  RETURN 4
 	END
-	INSERT INTO [User](Username, [Name])
+	INSERT INTO [Users]
 	VALUES (@Username, @Name)
 	INSERT INTO [Login](UserID, Username,
 		-- PasswordSalt,
