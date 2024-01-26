@@ -24,7 +24,7 @@ BEGIN
 
 	
 	INSERT INTO Playlist
-	VALUES(@userID, @playlistName, '00:00:00.0000000');
+	VALUES(@userID, @playlistName, '0');
 
 	
 END

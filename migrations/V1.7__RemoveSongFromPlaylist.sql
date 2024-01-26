@@ -1,5 +1,5 @@
-CREATE OR ALTER PROCEDURE AddSongToPlaylist(
-    @PlaylistName varchar(500), @SongName varchar(200)
+CREATE OR ALTER PROCEDURE RemoveSongFromPlaylist(
+	@PlaylistName varchar(500), @SongName varchar(200)
 )
 AS
 BEGIN
@@ -22,14 +22,13 @@ BEGIN
 		RETURN (2)
 	END
 
-INSERT INTO [SongInPlaylist] 
-VALUES(@SongID,@PlaylistID)
+	DELETE FROM SongInPlaylist WHERE SongID = @SongID AND PlaylistID = @PlaylistID
 
-DECLARE @SongLength int
-SELECT @SongLength = [Length] FROM Song WHERE SongID = @SongID
+	DECLARE @SongLength int
+	SELECT @SongLength = [Length] FROM Song WHERE SongID = @SongID
 
-UPDATE Playlist 
-SET [PlaylistLength] = [PlaylistLength] + @SongLength
-WHERE PlaylistID = @PlaylistID
+	UPDATE Playlist 
+	SET [PlaylistLength] = [PlaylistLength] - @SongLength
+	WHERE PlaylistID = @PlaylistID
 
 END
