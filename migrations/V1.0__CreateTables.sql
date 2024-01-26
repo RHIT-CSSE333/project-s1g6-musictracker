@@ -7,7 +7,7 @@ CREATE TABLE Users(
 CREATE TABLE Login(
 	UserID int PRIMARY KEY REFERENCES Users(UserID),
 	Username varchar(20),
-	PasswordSalt varchar(60),
+	PasswordHash varchar(60),
 	-- PasswordHash varchar(60)
 )
 
