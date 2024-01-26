@@ -3,13 +3,12 @@
 import java.io.*;
 import java.sql.*;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
+
  
 public class Main {
  
     public static void main(String[] args) throws ParseException {
-        String jdbcURL = "jdbc:sqlserver://golem.csse.rose-hulman.edu;databaseName=MusicTracker-deckerct;user=deckerct;password={RedParade2023}";
+        String jdbcURL = "jdbc:sqlserver://golem.csse.rose-hulman.edu;databaseName=MusicTrackerS1G6;user=deckerct;password={RedParade2023}";
  
         String csvFilePath = "Songs-short.txt";
  
@@ -22,7 +21,7 @@ public class Main {
             connection = DriverManager.getConnection(jdbcURL);
             connection.setAutoCommit(false);
  
-            String insertQuery = "INSERT INTO Song VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String insertQuery = "INSERT INTO Song VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
 
             CallableStatement insertAlbum = connection.prepareCall("{CALL [InsertAlbum](?,?,?)}");
@@ -37,10 +36,11 @@ public class Main {
  
             lineReader.readLine(); // skip header line
  
-            Integer id = 0;
             while ((lineText = lineReader.readLine()) != null) {
             	
                 String[] data = lineText.split("\\t");
+                if (data.length == 0) break;
+
                 String SongID = data[0];
                 String SongTitle = data[1];
                 String ArtistName = data[2];
@@ -55,10 +55,9 @@ public class Main {
                 insertStatement.setString(2, SongTitle);             
                 insertStatement.setString(3, AlbumID);
                 insertStatement.setString(4, Genre);
-                insertStatement.setString(5, Date);
-                insertStatement.setInt(6, Length);
-                insertStatement.setDouble(7,BPM);
-
+                insertStatement.setInt(5, Length);
+                insertStatement.setDouble(6,BPM);
+                //System.out.println(SongTitle);
                 insertAlbum.setString(1,AlbumID);
                 insertAlbum.setString(2,AlbumTitle);
                 insertAlbum.setString(3,Date);
@@ -85,7 +84,7 @@ public class Main {
                     insertSongArtist.executeBatch();
                     insertAlbumArtist.executeBatch();
                 }
-              id++;
+              
             }
  
             lineReader.close();
