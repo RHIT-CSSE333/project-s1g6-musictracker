@@ -33,6 +33,7 @@ BEGIN
 	PasswordHash) VALUES (@@IDENTITY, @Username,
 		-- @PasswordSalt,
 		@PasswordHash)
+	Return 0;
 END
 GO
 
