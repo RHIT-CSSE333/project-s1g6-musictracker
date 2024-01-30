@@ -5,8 +5,8 @@ import pyodbc
 
 SERVER = 'golem.csse.rose-hulman.edu'
 DATABASE = 'MusicTrackerS1G6'
-USERNAME = 'halseysh'
-PASSWORD = 'Baconcat66'
+USERNAME = 'MusicMan'
+PASSWORD = 'rickroll'
 TrustServerCertificate = 'yes'
 
 connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={SERVER};DATABASE={DATABASE};UID={USERNAME};PWD={PASSWORD};TrustServerCertificate={TrustServerCertificate};'
