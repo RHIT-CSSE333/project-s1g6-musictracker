@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+    <title>Playlist List</title>
+    <link rel="stylesheet" crossorigin="anonymous"
+   href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" >
+    
+   <script crossorigin="anonymous"
+   src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" >
+   </script>
+</head>
+
+
+<body>
+    <table class="table">
+        <thead>
+            <tr>
+            <th scope="col">PlaylistId</th>
+            <th scope="col">Playlist Name</th>
+            <th scope="col">Playlist Length</th>
+            </tr>
+        </thead>
+       <tbody>
+            {% for tip in mssqltips %}
+                <tr>
+                    <td>{{ tip.PlaylistId }}</th>
+                    <td>{{ tip.PlaylistName }}</td>
+                    <td>{{ tip.PlaylistLength }}</td>
+         <td><a href='updatePlaylist/{{ tip.PlaylistId}}'>Edit</a></td>
+                    <td><a href='deletePlaylist/{{ tip.PlaylistId }}'>Delete</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+   <button><a href="/addplaylist">ADD PLAYLIST</a></button>
+   <button><a href="/logout">LOG OUT</a></button>
+
+</body>
