@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+    <title>Song List</title>
+    <link rel="stylesheet" crossorigin="anonymous"
+   href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" >
+    
+   <script crossorigin="anonymous"
+   src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" >
+   </script>
+</head>
+
+
+<body>
+    <table class="table">
+        <thead>
+            <tr>
+            <th scope="col">Album Name</th>
+            <th scope="col">Released</th>
+            <th scope="col">Length</th>
+            </tr>
+        </thead>
+       <tbody>
+            {% for cr in cr %}
+                <tr>
+                    <td>{{ cr.AlbumName }}</th>
+                    <td>{{ cr.ReleaseDate }}</td>
+                    <td>{{ cr.Length }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+   <button><a href="/artistAlbums/{{cr.ArtistID}}">CANCEL</a></button>
+
+</body>
