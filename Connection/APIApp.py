@@ -23,8 +23,8 @@ def main():
 	mssqltips = []
 	result = coxn.execute("SELECT * FROM dbo.Playlist WHERE UserID = ?", id)
 	for row in result.fetchall():
-		 mssqltips.append({"PlaylistId": row[0], "PlaylistName": row[2], "PlaylistLength": row[3]})
-  
+		mssqltips.append({"PlaylistId": row[0], "PlaylistName": row[2], "PlaylistLength": row[3]})
+		 
 	return render_template("PlaylistList.html", mssqltips = mssqltips)
  
 @blogs.route("/addplaylist", methods = ['GET','POST'])
@@ -174,7 +174,7 @@ def registerUser():
 	
 @blogs.route('/', methods = ['GET', 'POST'])
 def landing():
-	 if request.method == 'GET' or request.method == 'POST':
+	if request.method == 'GET' or request.method == 'POST':
 		return render_template("Landing.html")
 	 
 @blogs.route("/logout")
