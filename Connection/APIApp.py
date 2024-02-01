@@ -71,11 +71,11 @@ def manageSong(id):
 	    coxn.commit()
 	    return redirect('/list')
 
-@blogs.route('/albumView/<int:id>', methods = ['GET'])
+@blogs.route('/albumView/<string:id>', methods = ['GET'])
 def albumView(id):
 	cr = []
 	cursor = coxn.cursor()
-	cursor.execute("SELECT a.AlbumID, s.SongID, s.SongTitle, s.Genre, s.BPM, a.AlbumName, a.ArtistID FROM dbo.Album a JOIN Song s on s.AlbumID = a.AlbumID WHERE a.AlbumID = ?", id)
+	cursor.execute("SELECT a.AlbumID, s.SongID, s.SongTitle, s.Genre, s.BPM, a.AlbumName, aa.ArtistID FROM dbo.Album a JOIN Song s on s.AlbumID = a.AlbumID JOIN AlbumReleasedBy aa on aa.AlbumID = a.AlbumID WHERE a.AlbumID = ?", id)
 	for row in cursor.fetchall():
 		cr.append({"AlbumID": row[0], "SongID": row[1], "SongTitle": row[2], "Genre": row[3], "BPM": row[4], "AlbumName": row[5], "ArtistID": row[6]})
 	return render_template("AlbumView.html", cr = cr)
@@ -84,7 +84,7 @@ def albumView(id):
 def artistAlbums(id):
 	cr = []
 	cursor = coxn.cursor()
-	cursor.execute("SELECT aa.AlbumID, a.AlbumName, a.ReleaseDate, a.[Length], aa.ArtistID FROM dbo.Album a JOIN AlbumReleaseBy aa ON aa.AlbumID = a.AlbumID WHERE a.AlbumID = ?", id)
+	cursor.execute("SELECT aa.AlbumID, a.AlbumName, a.ReleaseDate, a.[Length], aa.ArtistID FROM dbo.Album a JOIN AlbumReleasedBy aa ON aa.AlbumID = a.AlbumID WHERE aa.ArtistID = ?", id)
 	for row in cursor.fetchall():
 		cr.append({"AlbumID": row[0], "AlbumName": row[1], "ReleaseDate": row[2], "Length": row[3], "ArtistID": row[4]})
 	return render_template("ArtistAlbums.html", cr = cr)
