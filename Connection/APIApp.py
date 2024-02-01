@@ -14,7 +14,7 @@ blogs = Flask(__name__)
  #	   g.user = None
  #   else:
   #	  g.user = (
-  #	     coxn.cursor().execute("SELECT * FROM Users WHERE UserID = ?", (user_id)).fetchone()
+  #		 coxn.cursor().execute("SELECT * FROM Users WHERE UserID = ?", (user_id)).fetchone()
    #	 )
  
 @blogs.route("/list")
@@ -23,37 +23,37 @@ def main():
 	mssqltips = []
 	result = coxn.execute("SELECT * FROM dbo.Playlist WHERE UserID = ?", id)
 	for row in result.fetchall():
-	     mssqltips.append({"PlaylistId": row[0], "PlaylistName": row[2], "PlaylistLength": row[3]})
+		 mssqltips.append({"PlaylistId": row[0], "PlaylistName": row[2], "PlaylistLength": row[3]})
   
 	return render_template("PlaylistList.html", mssqltips = mssqltips)
  
 @blogs.route("/addplaylist", methods = ['GET','POST'])
 def addblog():
 	if request.method == 'GET':
-	    return render_template("AddPlaylist.html")
+		return render_template("AddPlaylist.html")
 	if request.method == 'POST':
-	    UserID = session['user_id']
-	    PlaylistName = request.form["PlaylistName"]
-	    cursor = coxn.cursor()
-	    cursor.execute("INSERT INTO dbo.Playlist(UserID, PlaylistName, PlaylistLength) VALUES (?, ?, ?)", UserID, PlaylistName, 0)
-	    cursor.commit()
+		UserID = session['user_id']
+		PlaylistName = request.form["PlaylistName"]
+		cursor = coxn.cursor()
+		cursor.execute("INSERT INTO dbo.Playlist(UserID, PlaylistName, PlaylistLength) VALUES (?, ?, ?)", UserID, PlaylistName, 0)
+		cursor.commit()
 	   
-	    return redirect('/list')
+		return redirect('/list')
  
 @blogs.route('/updatePlaylist/<int:id>', methods = ['GET','POST'])
 def updatePlaylist(id):
 	cr = []
 	cursor = coxn.cursor()
 	if request.method == 'GET':
-	    cursor.execute("SELECT * FROM dbo.Playlist WHERE PlaylistId = ?", id)
-	    for row in cursor.fetchall():
-	        cr.append({"PlaylistId": row[0], "PlaylistName": row[2]})
-	    return render_template("UpdatePlaylist.html", tip =  cr[0])
+		cursor.execute("SELECT * FROM dbo.Playlist WHERE PlaylistId = ?", id)
+		for row in cursor.fetchall():
+			cr.append({"PlaylistId": row[0], "PlaylistName": row[2]})
+		return render_template("UpdatePlaylist.html", tip =  cr[0])
 	if request.method == 'POST':
-	    PlaylistName = request.form["PlaylistName"]
-	    cursor.execute("UPDATE dbo.Playlist SET PlaylistName = ? WHERE PlaylistId = ?", PlaylistName, id)
-	    coxn.commit()
-	    return redirect('/list')
+		PlaylistName = request.form["PlaylistName"]
+		cursor.execute("UPDATE dbo.Playlist SET PlaylistName = ? WHERE PlaylistId = ?", PlaylistName, id)
+		coxn.commit()
+		return redirect('/list')
 	
 
 @blogs.route('/songManage/<int:id>', methods = ['GET','POST'])
@@ -61,15 +61,15 @@ def manageSong(id):
 	cr = []
 	cursor = coxn.cursor()
 	if request.method == 'GET':
-	    cursor.execute("SELECT p.[PlaylistID], s.SongID, s.SongTitle, s.Genre, s.BPM, p.PlaylistName FROM dbo.Playlist p JOIN SongInPlaylist sp on p.[PlaylistID] = sp.PlaylistID JOIN Song s on sp.SongID = s.SongID WHERE p.[PlaylistId] = ?", id)
-	    for row in cursor.fetchall():
-	        cr.append({"PlaylistID": row[0], "SongID": row[1], "SongTitle": row[2], "Genre": row[3], "BPM": row[4], "PlaylistName": row[5]})
-	    return render_template("SongList.html", cr = cr)
+		cursor.execute("SELECT p.[PlaylistID], s.SongID, s.SongTitle, s.Genre, s.BPM, p.PlaylistName FROM dbo.Playlist p JOIN SongInPlaylist sp on p.[PlaylistID] = sp.PlaylistID JOIN Song s on sp.SongID = s.SongID WHERE p.[PlaylistId] = ?", id)
+		for row in cursor.fetchall():
+			cr.append({"PlaylistID": row[0], "SongID": row[1], "SongTitle": row[2], "Genre": row[3], "BPM": row[4], "PlaylistName": row[5]})
+		return render_template("SongList.html", cr = cr)
 	if request.method == 'POST':
-	    PlaylistName = request.form["PlaylistName"]
-	    cursor.execute("UPDATE dbo.Playlist SET PlaylistName = ? WHERE PlaylistId = ?", PlaylistName, id)
-	    coxn.commit()
-	    return redirect('/list')
+		PlaylistName = request.form["PlaylistName"]
+		cursor.execute("UPDATE dbo.Playlist SET PlaylistName = ? WHERE PlaylistId = ?", PlaylistName, id)
+		coxn.commit()
+		return redirect('/list')
 
 @blogs.route('/albumView/<string:id>', methods = ['GET'])
 def albumView(id):
@@ -110,30 +110,30 @@ def deletePlaylist(id):
 @blogs.route('/Login', methods = ['GET', 'POST'])
 def loginUser():
 	if request.method == 'GET':
-	    return render_template("Login.html")
+		return render_template("Login.html")
 	if request.method == 'POST':
-	    cursor = coxn.cursor()
-	    Username = request.form["Username"]
-	    Password = request.form["Password"]
-	    print("Posting " + Username + " " + Password)
+		cursor = coxn.cursor()
+		Username = request.form["Username"]
+		Password = request.form["Password"]
+		print("Posting " + Username + " " + Password)
 
-	    error = None
-	    user = cursor.execute(
-	        "SELECT * FROM Login WHERE username = ?", (Username)
-	    ).fetchone()
-	    
+		error = None
+		user = cursor.execute(
+			"SELECT * FROM Login WHERE username = ?", (Username)
+		).fetchone()
+		
 
-	    if user is None:
-	        error = "Incorrect username."
+		if user is None:
+			error = "Incorrect username."
 	   # elif not check_password_hash(user["password"], password):
-	    elif not user[2] == Password:
-	        error = "Incorrect password."
+		elif not user[2] == Password:
+			error = "Incorrect password."
 
-	    if error is None:
-	        # store the user id in a new session and return to the index
-	        session.clear()
-	        session['user_id'] = user[0]
-	        return redirect('/list')
+		if error is None:
+			# store the user id in a new session and return to the index
+			session.clear()
+			session['user_id'] = user[0]
+			return redirect('/list')
 
 	flash(error)
 	return render_template("Login.html", error=error)
@@ -141,41 +141,41 @@ def loginUser():
 @blogs.route('/Register', methods = ['GET', 'POST'])
 def registerUser():
 	if request.method == 'GET':
-	    return render_template("Register.html")
+		return render_template("Register.html")
 	if request.method == 'POST':
-	    cursor = coxn.cursor()
-	    RegisterUsername = request.form["registerUsername"]
-	    RegisterName = request.form["registerName"]
-	    RegisterPassword = request.form["registerPassword"]
+		cursor = coxn.cursor()
+		RegisterUsername = request.form["registerUsername"]
+		RegisterName = request.form["registerName"]
+		RegisterPassword = request.form["registerPassword"]
 	   # result = cursor.execute('exec [dbo].[TempLogin](?, ?)', (Username, Password))
 
-	    error = None
-	    user = cursor.execute(
-	        "SELECT * FROM Login WHERE username = ?", (RegisterUsername)
-	    ).fetchone()
-	    
+		error = None
+		user = cursor.execute(
+			"SELECT * FROM Login WHERE username = ?", (RegisterUsername)
+		).fetchone()
+		
 
-	    if user is None:
-	        storedProc = 'exec [dbo].[Register] @Username = ?, @Name = ?, @PasswordHash = ?'
-	        params = (RegisterUsername, RegisterName, RegisterPassword)
-	        result = cursor.execute(storedProc, params)
-	        cursor.commit()
-	        return redirect('/Login')
-	       # if result != 0:
-	       #      error = "Registration Error"
+		if user is None:
+			storedProc = 'exec [dbo].[Register] @Username = ?, @Name = ?, @PasswordHash = ?'
+			params = (RegisterUsername, RegisterName, RegisterPassword)
+			result = cursor.execute(storedProc, params)
+			cursor.commit()
+			return redirect('/Login')
+		   # if result != 0:
+		   #	  error = "Registration Error"
 
-	    #if error is None:
-	        # store the user id in a new session and return to the index
-	       # return redirect(url_for("index"))
-	     #   return redirect('/list')
+		#if error is None:
+			# store the user id in a new session and return to the index
+		   # return redirect(url_for("index"))
+		 #   return redirect('/list')
 
-	    flash(error)
-	    return render_template("Register.html", error=None)
+		flash(error)
+		return render_template("Register.html", error=None)
 	
 @blogs.route('/', methods = ['GET', 'POST'])
 def landing():
 	 if request.method == 'GET' or request.method == 'POST':
-	    return render_template("Landing.html")
+		return render_template("Landing.html")
 	 
 @blogs.route("/logout")
 def logout():
