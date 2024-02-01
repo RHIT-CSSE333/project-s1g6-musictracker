@@ -23,13 +23,13 @@
        <tbody>
             {% for cr in cr %}
                 <tr>
-                    <td>{{ cr.AlbumName }}</th>
+                    <td><a href="/albumView/{{cr.AlbumID}}">{{ cr.AlbumName }}</a></th>
                     <td>{{ cr.ReleaseDate }}</td>
                     <td>{{ cr.Length }}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-   <button><a href="/artistAlbums/{{cr.ArtistID}}">CANCEL</a></button>
+   <button><a href="/artistAlbums/{{cr.ArtistID}}">HOME</a></button>
 
 </body>
