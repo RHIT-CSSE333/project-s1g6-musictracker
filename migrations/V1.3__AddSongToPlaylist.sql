@@ -1,11 +1,11 @@
 CREATE OR ALTER PROCEDURE AddSongToPlaylist(
-    @PlaylistName varchar(500), @SongName varchar(200)
+    @PlaylistID int, @SongName varchar(200)
 )
 AS
 BEGIN
 
-	DECLARE @PlaylistID varchar(50)
-	SELECT @PlaylistID = PlaylistID FROM Playlist WHERE PlaylistName = @PlaylistName
+	--DECLARE @PlaylistID varchar(50)
+	--SELECT @PlaylistID = PlaylistID FROM Playlist WHERE PlaylistName = @PlaylistName
 
 	DECLARE @SongID varchar(50)
 	SELECT @SongID = SongID FROM Song WHERE SongTitle = @SongName

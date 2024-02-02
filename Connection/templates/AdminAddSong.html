@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr">
+<head>
+    <title>Add Song To Database</title>
+    
+    <link rel="stylesheet" crossorigin="anonymous"
+   href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" >
+    
+   <script crossorigin="anonymous"
+   src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" >
+   </script>
+ 
+</head>
+ 
+<body>
+
+    <div class="form-container">
+        <!-- Login Form -->
+        <form action="" method="POST">
+            <h2>Song</h2>
+            <label for="ArtistID">ArtistID</label>
+            <input type="text" class="form-control" name="ArtistID" id="ArtistID" required>
+    
+            <label for="SongID">SongID</label>
+            <input type="text" class="form-control" name="SongID" id="SongID" required>
+
+            <label for="SongTitle">SongTitle</label>
+            <input type="text" class="form-control" name="SongTitle" id="SongTitle" required>
+
+            <label for="AlbumID">AlbumID</label>
+            <input type="text" class="form-control" name="AlbumID" id="AlbumID" required>
+
+            <label for="Genre">Genre</label>
+            <input type="text" class="form-control" name="Genre" id="Genre" required>
+
+            <label for="Length">Length</label>
+            <input type="text" class="form-control" name="Length" id="Length" required>
+
+            <label for="BPM">BPM</label>
+            <input type="text" class="form-control" name="BPM" id="BPM" required>
+    
+            <button type="btnAdd" class="btn btn-primary">Add</button>
+            <button onclick="location.href='/'">Return</button>
+        </form>
+    </div>
+
+
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flashes">
+            {% for message in messages %}
+                <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+</body>
+</html>

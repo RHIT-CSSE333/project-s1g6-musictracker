@@ -8,7 +8,7 @@ import java.text.ParseException;
 public class Main {
  
     public static void main(String[] args) throws ParseException {
-        String jdbcURL = "jdbc:sqlserver://golem.csse.rose-hulman.edu;databaseName=MusicTrackerS1G6;user=MusicMan;password={rickroll}";
+        String jdbcURL = "jdbc:sqlserver://golem.csse.rose-hulman.edu;databaseName=MusicTracker-halseysh;user=MusicMan;password={rickroll}";
  
         String csvFilePath = "Songs-short.txt";
  
