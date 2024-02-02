@@ -11,4 +11,4 @@ TrustServerCertificate = 'yes'
 
 connectionString = f'DRIVER={{ODBC Driver 18 for SQL Server}};SERVER={SERVER};DATABASE={DATABASE};UID={USERNAME};PWD={PASSWORD};TrustServerCertificate={TrustServerCertificate};'
 
-coxn = pyodbc.connect(connectionString) 
+coxn = pyodbc.connect(connectionString)
