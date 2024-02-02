@@ -192,8 +192,8 @@ def registerUser():
     	   # return redirect(url_for("index"))
     	 #   return redirect('/list')
 
-    	flash(error)
-    	return render_template("Register.html", error=None)
+    	flash(error)	
+		return render_template("Register.html", error=None)
 	
 @blogs.route('/', methods = ['GET', 'POST'])
 def landing():
