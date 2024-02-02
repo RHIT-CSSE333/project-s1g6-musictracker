@@ -14,17 +14,49 @@
  
 <body>
     
-    <h2>Playlist Details</h2>
+    <h2>Search For Albums and Songs</h2>
  
     <form action="" method = "POST">
         <div class="form-group row">
         <div class="form-group row">
-            <label for="title">PlaylistName</label>
-            <input type="text" class="form-control" name="PlaylistName" id="PlaylistName" >
+            <label for="title">Song Name</label>
+            <input type="text" class="form-control" name="ItemName" id="ItemName" >
         </div>
 
-        <button type="btnAdd" class="btn btn-primary">Submit</button>
+        <button type="search" class="btn btn-primary">Search</button>
         <a href="/list" class="btn btn-primary">Cancel</a>
       </form>
+
+      <table class="table">
+        <thead>
+            <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Artist</th>
+            <th scope="col">Album</th>
+            <th scope="col">Genre</th>
+            <th scope="col">Length</th>
+
+            <th scope="col">    </th>
+            <th scope="col">    </th>
+            
+
+            </tr>
+        </thead>
+       <tbody>
+            {% for tip in mssqltips %}
+                <tr>
+                    <td>{{ tip.SongTitle }}</th>
+                    <td>{{ tip.ArtistName }}</td>
+                    <td>{{ tip.AlbumName }}</td>
+                    <td>{{ tip.Genre }}</td>
+                    <td>{{ tip.length }}</td>
+                    <td><a href='albumView/{{tip.AlbumID}}'> View Album</a> </td>
+                    <td><a href='artistAlbums/{{tip.ArtistID}}'> View Artist</a> </td>
+                    
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
 </body>
 </html>
