@@ -192,7 +192,7 @@ def search():
 		cursor = coxn.cursor()
 		ItemName = request.form["ItemName"]
 	
-		result = cursor.execute("SELECT Song.SongTitle, Artist.Name, SongMadeBy.ArtistID, AlbumName, Song.AlbumID, Genre, Song.Length FROM Song JOIN Album ON Song.AlbumID = Album.AlbumID JOIN SongMadeBy ON Song.SongID = SongMadeBy.SongID JOIN Artist ON SongMadeBy.ArtistID = Artist.ArtistID WHERE SongTitle LIKE ? ", "%"+ItemName+"%" )
+		result = cursor.execute("SELECT Song.SongTitle, Artist.Name, SongMadeBy.ArtistID, AlbumName, Song.AlbumID, Genre, Song.Length FROM Song JOIN Album ON Song.AlbumID = Album.AlbumID JOIN SongMadeBy ON Song.SongID = SongMadeBy.SongID JOIN Artist ON SongMadeBy.ArtistID = Artist.ArtistID WHERE SongTitle LIKE ? OR AlbumName LIKE ? OR Artist.Name LIKE ?", "%"+ItemName+"%","%"+ItemName+"%","%"+ItemName+"%" )
 		for row in result.fetchall():
 			mssqltips.append({"SongTitle":row[0], "ArtistName":row[1], "ArtistID":row[2], "AlbumName":row[3], "AlbumID":row[4],"Genre": row[5], "Length":row[6]})      
 			coxn.commit()
