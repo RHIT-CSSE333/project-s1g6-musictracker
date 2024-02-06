@@ -21,10 +21,17 @@ blogs = Flask(__name__)
 def main():
     id = session['user_id']
     mssqltips = []
+    user=[]
+
+    user = coxn.execute("SELECT [Name] FROM dbo.Users WHERE UserID = ?",id).fetchone()
+    coxn.commit()
+
     result = coxn.execute("SELECT * FROM dbo.Playlist WHERE UserID = ?", id)
+    
     for row in result.fetchall():
         mssqltips.append({"PlaylistId": row[0], "PlaylistName": row[2], "PlaylistLength": row[3]})
-    return render_template("PlaylistList.html", mssqltips = mssqltips)
+    
+    return render_template("PlaylistList.html", mssqltips = mssqltips,user=user)
  
 @blogs.route("/addplaylist", methods = ['GET','POST'])
 def addblog():
@@ -79,8 +86,7 @@ def addSong(id):
         SongName = request.form["SongName"]
         error = None
         song = cursor.execute(
-            "SELECT * FROM Song WHERE SongTitle = ?", (SongName)
-        ).fetchone()
+            "SELECT * FROM Song WHERE SongTitle = ?", (SongName)).fetchone()
         if song == None:
             print('ERROR')
             error = 'Song does not exist'

@@ -2,20 +2,93 @@
 <html lang="en-US" dir="ltr">
 <head>
     <title>Playlist List</title>
-    <link rel="stylesheet" crossorigin="anonymous"
-   href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" >
+    <link rel="stylesheet" crossorigin="anonymous" href="{{ url_for('static',filename='style.css')}}">
+<style>
+   /* Body styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 20px; /* Add padding to the body */
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-items: left;
     
-   <script crossorigin="anonymous"
-   src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" >
-   </script>
+    min-height: 100vh; /* Ensure the body takes up at least the full height of the viewport */
+}
+
+/* Heading styling */
+h1, h3 {
+    margin-top: 20px; /* Add margin to headings */
+}
+
+/* Button styling */
+button {
+    margin-top: 10px; /* Add margin to create space between buttons */
+}
+
+button a {
+    text-decoration: none;
+    color: white;
+    padding: 10px 20px;
+    background-color: #4caf50;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    
+}
+
+button a:hover {
+    background-color: #45a049;
+}
+
+/* Table styling */
+.table {
+    margin-top: 20px;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+body button a {
+    border: none; /* Ensure no border */
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+/* Links styling */
+a {
+    color: #4caf50;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+    
+</style>
 </head>
 
 
 <body>
 
-    <!-- Search For Songs and Albums-->
-    <button><a href="/search">Search For songs and albums</a></button>
+    <h1>Welcome, {{ user.Name }} !</h1>
 
+    <!-- Search For Songs and Albums-->
+    <h3>Search For Songs, Albums, and Artists</h3>
+    <button><a href="/search">Search</a></button>
+
+
+    <h3>My Playlists:</h3>
     <table class="table">
         <thead>
             <tr>
