@@ -62,7 +62,7 @@ def updatePlaylist(id):
         return redirect('/list')
         
 @blogs.route('/suggestedSongs/<int:id>', methods = ['GET'])
-def updatePlaylist(id):
+def suggestedSongs(id):
     cr = []
     cursor = coxn.cursor()
     if request.method == 'GET':
