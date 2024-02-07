@@ -252,8 +252,8 @@ def logout():
     session.clear()
     return redirect('/')
 
-@blogs.route('/search',methods = ['GET', 'POST'])
-def search():
+@blogs.route('/search/<int:id>',methods = ['GET', 'POST'])
+def search(id):
     mssqltips = []
     if request.method == 'GET':
         return render_template("Search.html",mssqltips=mssqltips)
@@ -265,7 +265,7 @@ def search():
         for row in result.fetchall():
             mssqltips.append({"SongTitle":row[0], "ArtistName":row[1], "ArtistID":row[2], "AlbumName":row[3], "AlbumID":row[4],"Genre": row[5], "Length":row[6]})      
             coxn.commit()
-    return render_template("Search.html",mssqltips=mssqltips)
+    return render_template("Search.html",mssqltips=mssqltips,id=id)
  
 if(__name__ == "__main__"):
 

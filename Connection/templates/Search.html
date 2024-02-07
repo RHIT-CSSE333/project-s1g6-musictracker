@@ -18,6 +18,7 @@ body {
 }
 
 
+
 /* Form styling */
 form {
     padding: 20px;
@@ -113,6 +114,7 @@ a:hover {
 
             <th scope="col">    </th>
             <th scope="col">    </th>
+            <th scope="col">    </th>  
             
 
             </tr>
@@ -127,7 +129,7 @@ a:hover {
                     <td>{{ tip.length }}</td>
                     <td><a href='albumView/{{tip.AlbumID}}'> View Album</a> </td>
                     <td><a href='artistAlbums/{{tip.ArtistID}}'> View Artist</a> </td>
-                    <td><a href=''></a></td>
+                    <td><a href='' method = POST>Add to Playlist</a></td>
                     
                 </tr>
             {% endfor %}
