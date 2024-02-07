@@ -60,6 +60,16 @@ def updatePlaylist(id):
         cursor.execute("UPDATE dbo.Playlist SET PlaylistName = ? WHERE PlaylistId = ?", PlaylistName, id)
         coxn.commit()
         return redirect('/list')
+        
+@blogs.route('/suggestedSongs/<int:id>', methods = ['GET'])
+def updatePlaylist(id):
+    cr = []
+    cursor = coxn.cursor()
+    if request.method == 'GET':
+        cursor.execute("SELECT TOP 64 ss.SongTitle, ss.Genre, ss.[Length], ss.BPM FROM dbo.Song ss JOIN dbo.Song ps ON ss.Genre = ps.Genre JOIN SongInPlaylist sip ON ps.SongID = sip.SongID WHERE sip.PlaylistID = ? ORDER BY ABS(ss.BPM - ps.BPM) ASC", id)
+        for row in cursor.fetchall():
+            cr.append({"SongTitle": row[0], "Genre": row[1], "Length": row[2], "BPM": row[3]})
+        return render_template("SimilarSongs.html", tip =  cr[0])
     
 
 @blogs.route('/songManage/<int:id>', methods = ['GET','POST'])
