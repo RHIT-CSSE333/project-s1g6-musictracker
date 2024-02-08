@@ -2,6 +2,8 @@
 <html lang="en-US" dir="ltr">
 <head>
     <title>Song List</title>
+    <link rel="stylesheet" crossorigin="anonymous" href="{{ url_for('static',filename='style.css')}}">
+
     <style>
         /* Body styling */
     body {
@@ -41,7 +43,7 @@
     }
     
     /* Button styling */
-    button.btn {
+    button {
         margin-top: 10px;
         padding: 10px 20px;
         border: none;
@@ -87,6 +89,7 @@
 
 
 <body>
+    <h1>Playlist: {{cr[1].PlaylistName}}</h1>
     <table class="table">
         <thead>
             <tr>
@@ -101,12 +104,13 @@
                     <td>{{ cr.SongTitle }}</td>
                     <td>{{ cr.Genre }}</td>
                     <td>{{ cr.BPM }}</td>
-         <td><a href='deleteSong/{{cr.SongTitle}}/{{cr.PlaylistName}}/{{cr.PlaylistID}}'>Delete</a></td>
+         <td><a href='deleteSong/{{cr.SongTitle}}/{{cr.PlaylistName}}/{{play}}'>Delete</a></td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-   <button><a href="/addSong/{{play}}">ADD SONG</a></button>
+   <button><a href="/search/{{play}}">ADD SONG</a></button>
+   <button><a href="/suggestedSongs/{{play}}">SEE SUGGESTED SONGS</a></button>
    <button><a href="/updatePlaylist/{{play}}">CANCEL</a></button>
 
 </body>

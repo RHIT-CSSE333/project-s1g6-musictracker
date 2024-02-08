@@ -112,9 +112,9 @@ a:hover {
             <th scope="col">Genre</th>
             <th scope="col">Length</th>
 
-            <!--th scope="col">    </th>
-            <th scope="col">    </th-->
-            <th scope="col">    </th>  
+            <th scope="col">    </th>
+            <th scope="col">    </th>
+             
             
 
             </tr>
@@ -127,9 +127,9 @@ a:hover {
                     <td>{{ tip.AlbumName }}</td>
                     <td>{{ tip.Genre }}</td>
                     <td>{{ tip.length }}</td>
-                    <!--td><a href='albumView/{{tip.AlbumID}}'> View Album</a> </td>
-                    <td><a href='artistAlbums/{{tip.ArtistID}}'> View Artist</a> </td-->
-                    <td><a href='addSong/{{id}}/{{tip.SongTitle}}'>Add to Playlist</a></td>
+                    <td><a href='albumView/{{tip.AlbumID}}'> View Album</a> </td>
+                    <td><a href='artistAlbums/{{tip.ArtistID}}'> View Artist</a> </td>
+                    
                     
                 </tr>
             {% endfor %}
