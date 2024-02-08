@@ -107,16 +107,15 @@ a:hover {
             </tr>
         </thead>
        <tbody>
-            {% for tip in mssqltips %}
+            {% for song in tip %}
                 <tr>
-                    <td>{{ tip.SongTitle }}</th>
-                    <td>{{ tip.Genre }}</td>
-                    <td>{{ tip.length }}</td>
-                    <td>{{ tip.BPM }}</td>
-                    <td><a href='albumView/{{tip.AlbumID}}'> View Album</a> </td>
-                    <td><a href='artistAlbums/{{tip.ArtistID}}'> View Artist</a> </td>
+                    <td>{{ song.SongTitle }}</th>
+                    <td>{{ song.Genre }}</td>
+                    <td>{{ song.Length }}</td>
+                    <td>{{ song.BPM }}</td>
+                    <td><a href='albumView/{{song.AlbumID}}'>View Album</a></td>
+                    <td><a href='artistAlbums/{{song.ArtistID}}'>View Artist</a></td>
                     <td><a href=''></a></td>
-                    
                 </tr>
             {% endfor %}
         </tbody>
