@@ -23,10 +23,10 @@ def main():
     mssqltips = []
     user=[]
 
-    user = coxn.execute("SELECT [Name] FROM dbo.Users WHERE UserID = ?",id).fetchone()
+    user = coxn.execute("exec GetName ?",id).fetchone()
     coxn.commit()
 
-    result = coxn.execute("SELECT * FROM dbo.Playlist WHERE UserID = ?", id)
+    result = coxn.execute("exec GetUserPlaylists ?", id)
     
     for row in result.fetchall():
         mssqltips.append({"PlaylistId": row[0], "PlaylistName": row[2], "PlaylistLength": row[3]})
@@ -41,7 +41,7 @@ def addblog():
         UserID = session['user_id']
         PlaylistName = request.form["PlaylistName"]
         cursor = coxn.cursor()
-        cursor.execute("INSERT INTO dbo.Playlist(UserID, PlaylistName, PlaylistLength) VALUES (?, ?, ?)", UserID, PlaylistName, 0)
+        cursor.execute("EXEC CreatePlaylist ?,?", UserID, PlaylistName)
         cursor.commit()
        
         return redirect('/list')
@@ -51,13 +51,13 @@ def updatePlaylist(id):
     cr = []
     cursor = coxn.cursor()
     if request.method == 'GET':
-        cursor.execute("SELECT * FROM dbo.Playlist WHERE PlaylistId = ?", id)
+        cursor.execute("EXEC PlaylistInfo ?", id)
         for row in cursor.fetchall():
             cr.append({"PlaylistId": row[0], "PlaylistName": row[2]})
         return render_template("UpdatePlaylist.html", tip =  cr[0])
     if request.method == 'POST':
         PlaylistName = request.form["PlaylistName"]
-        cursor.execute("UPDATE dbo.Playlist SET PlaylistName = ? WHERE PlaylistId = ?", PlaylistName, id)
+        cursor.execute("EXEC UpdatePlaylistName ?,?", PlaylistName, id)
         coxn.commit()
         return redirect('/list')
     
@@ -77,13 +77,13 @@ def manageSong(id):
     cr = []
     cursor = coxn.cursor()
     if request.method == 'GET':
-        cursor.execute("SELECT p.[PlaylistID], s.SongID, s.SongTitle, s.Genre, s.BPM, p.PlaylistName FROM dbo.Playlist p JOIN SongInPlaylist sp on p.[PlaylistID] = sp.PlaylistID JOIN Song s on sp.SongID = s.SongID WHERE p.[PlaylistId] = ?", id)
+        cursor.execute("EXEC SongList ?", id)
         for row in cursor.fetchall():
             cr.append({"PlaylistID": row[0], "SongID": row[1], "SongTitle": row[2], "Genre": row[3], "BPM": row[4], "PlaylistName": row[5]})
         return render_template("SongList.html", cr = cr, play = id)
     if request.method == 'POST':
         PlaylistName = request.form["PlaylistName"]
-        cursor.execute("UPDATE dbo.Playlist SET PlaylistName = ? WHERE PlaylistId = ?", PlaylistName, id)
+        cursor.execute("EXEC UpdatePlaylistName ?,?", PlaylistName, id)
         coxn.commit()
         return redirect('/list')
     
@@ -117,7 +117,7 @@ def addSong(id,title):
 def albumView(id):
     cr = []
     cursor = coxn.cursor()
-    cursor.execute("SELECT a.AlbumID, s.SongID, s.SongTitle, s.Genre, s.BPM, a.AlbumName, aa.ArtistID FROM dbo.Album a JOIN Song s on s.AlbumID = a.AlbumID JOIN AlbumReleasedBy aa on aa.AlbumID = a.AlbumID WHERE a.AlbumID = ?", id)
+    cursor.execute("EXEC AlbumView ?", id)
     for row in cursor.fetchall():
         cr.append({"AlbumID": row[0], "SongID": row[1], "SongTitle": row[2], "Genre": row[3], "BPM": row[4], "AlbumName": row[5], "ArtistID": row[6]})
     return render_template("AlbumView.html", cr = cr)
@@ -126,7 +126,7 @@ def albumView(id):
 def artistAlbums(id):
     cr = []
     cursor = coxn.cursor()
-    cursor.execute("SELECT aa.AlbumID, a.AlbumName, a.ReleaseDate, a.[Length], aa.ArtistID FROM dbo.Album a JOIN AlbumReleasedBy aa ON aa.AlbumID = a.AlbumID WHERE aa.ArtistID = ?", id)
+    cursor.execute("EXEC ArtistView ?", id)
     for row in cursor.fetchall():
         cr.append({"AlbumID": row[0], "AlbumName": row[1], "ReleaseDate": row[2], "Length": row[3], "ArtistID": row[4]})
     return render_template("ArtistAlbums.html", cr = cr)
@@ -145,8 +145,10 @@ def deleteSong(songtitle, playlistname, playlistid):
 @blogs.route('/deletePlaylist/<int:id>')
 def deletePlaylist(id):
     cursor = coxn.cursor()
-    cursor.execute("DELETE FROM dbo.Playlist WHERE PlaylistId = ?", id)
-    #cursor.execute("DELETE * FROM dbo.SongInPlaylist WHERE PlaylistId = ?", id)
+    # cursor.execute("DELETE FROM dbo.SongInPlaylist WHERE PlaylistId = ?", id)
+    # coxn.commit()
+    #cursor.execute("DELETE FROM dbo.Playlist WHERE PlaylistId = ?", id)
+    cursor.execute("EXEC DeletePlaylist ?", id)
     coxn.commit()
     return redirect('/list')
 
@@ -161,7 +163,7 @@ def loginUser():
         print("Posting " + Username + " " + Password)
         error = None
         user = cursor.execute(
-            "SELECT * FROM Login WHERE username = ?", (Username)
+            "EXEC GetUserInfo ?", (Username)
         ).fetchone()
         if user is None:
             error = "Incorrect username."
@@ -188,7 +190,7 @@ def registerUser():
        # result = cursor.execute('exec [dbo].[TempLogin](?, ?)', (Username, Password))
         error = None
         user = cursor.execute(
-            "SELECT * FROM Login WHERE username = ?", (RegisterUsername)
+            "EXEC GetUserInfo ?", (RegisterUsername)
         ).fetchone()
         if user is None:
             storedProc = 'exec [dbo].[Register] @Username = ?, @Name = ?, @PasswordHash = ?'
@@ -277,10 +279,10 @@ def search(id):
     if request.method == 'POST':
         cursor = coxn.cursor()
         ItemName = request.form["ItemName"]
-
-        result = cursor.execute("SELECT Song.SongTitle, Artist.Name, SongMadeBy.ArtistID, AlbumName, Song.AlbumID, Genre, Song.Length, Song.SongID FROM Song JOIN Album ON Song.AlbumID = Album.AlbumID JOIN SongMadeBy ON Song.SongID = SongMadeBy.SongID JOIN Artist ON SongMadeBy.ArtistID = Artist.ArtistID WHERE SongTitle LIKE ? OR AlbumName LIKE ? OR Artist.Name LIKE ?", "%"+ItemName+"%","%"+ItemName+"%","%"+ItemName+"%" )
+        result = cursor.execute("EXEC SearchResults ?",ItemName)
         for row in result.fetchall():
-            mssqltips.append({"SongTitle":row[0], "ArtistName":row[1], "ArtistID":row[2], "AlbumName":row[3], "AlbumID":row[4],"Genre": row[5], "Length":row[6],"SongID":row[6]})      
+            mssqltips.append({"SongTitle":row[0], "ArtistName":row[1], "ArtistID":row[2], "AlbumName":row[3], 
+                              "AlbumID":row[4],"Genre": row[5], "Length":row[6],"SongID":row[6]})      
             coxn.commit()
     return render_template("Search.html",mssqltips=mssqltips,id=id)
 
@@ -293,9 +295,10 @@ def search2():
         cursor = coxn.cursor()
         ItemName = request.form["ItemName"]
 
-        result = cursor.execute("SELECT Song.SongTitle, Artist.Name, SongMadeBy.ArtistID, AlbumName, Song.AlbumID, Genre, Song.Length, Song.SongID FROM Song JOIN Album ON Song.AlbumID = Album.AlbumID JOIN SongMadeBy ON Song.SongID = SongMadeBy.SongID JOIN Artist ON SongMadeBy.ArtistID = Artist.ArtistID WHERE SongTitle LIKE ? OR AlbumName LIKE ? OR Artist.Name LIKE ?", "%"+ItemName+"%","%"+ItemName+"%","%"+ItemName+"%" )
+        result = cursor.execute("EXEC SearchResults ?",ItemName)
         for row in result.fetchall():
-            mssqltips.append({"SongTitle":row[0], "ArtistName":row[1], "ArtistID":row[2], "AlbumName":row[3], "AlbumID":row[4],"Genre": row[5], "Length":row[6],"SongID":row[6]})      
+            mssqltips.append({"SongTitle":row[0], "ArtistName":row[1], "ArtistID":row[2], "AlbumName":row[3], 
+                              "AlbumID":row[4],"Genre": row[5], "Length":row[6],"SongID":row[6]})      
             coxn.commit()
     return render_template("Search2.html",mssqltips=mssqltips,)
  
