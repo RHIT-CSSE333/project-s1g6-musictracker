@@ -8,9 +8,9 @@ import java.text.ParseException;
 public class Main {
  
     public static void main(String[] args) throws ParseException {
-        String jdbcURL = "jdbc:sqlserver://golem.csse.rose-hulman.edu;databaseName=MusicTracker-halseysh;user=MusicMan;password={rickroll}";
+        String jdbcURL = "jdbc:sqlserver://golem.csse.rose-hulman.edu;databaseName=MusicTracker-deckerct;user=deckerct;password={RedParade2023}";
  
-        String csvFilePath = "Songs-short.txt";
+        String csvFilePath = "spotify_songs.txt";
  
         int batchSize = 20;
  
@@ -19,7 +19,7 @@ public class Main {
         try {
  
             connection = DriverManager.getConnection(jdbcURL);
-            connection.setAutoCommit(false);
+            
  
             String insertQuery = "INSERT INTO Song VALUES (?, ?, ?, ?, ?, ?)";
             PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
@@ -46,7 +46,7 @@ public class Main {
                 String ArtistName = data[2];
                 String AlbumID = data[4];
                 String AlbumTitle = data[5];
-                String Genre = data[9];
+                String Genre = data[10];
                 String Date = data[6];
                 Integer Length = Integer.valueOf(data[22]);
                 Double BPM = Double.valueOf(data[21]);

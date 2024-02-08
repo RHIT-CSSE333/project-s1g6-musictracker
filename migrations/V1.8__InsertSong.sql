@@ -1,5 +1,3 @@
-USE [MusicTracker-halseysh]
-GO
 /****** Object:  StoredProcedure [dbo].[InsertSongArtist]    Script Date: 2/1/2024 7:27:51 PM ******/
 SET ANSI_NULLS ON
 GO
