@@ -93,6 +93,14 @@ BEGIN
 	SELECT * FROM Login WHERE username = @Username	
 END
 GO
+CREATE OR ALTER PROCEDURE GetAdmin (
+	@Username varchar(20)
+)
+AS
+BEGIN
+	SELECT IsAdmin FROM Login WHERE username = @Username	
+END
+GO
 CREATE OR ALTER PROCEDURE SearchResults (
 	@ItemName nvarchar(200)
 )

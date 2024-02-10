@@ -8,6 +8,7 @@ CREATE TABLE Login(
 	UserID int PRIMARY KEY REFERENCES Users(UserID),
 	Username varchar(20),
 	PasswordHash varchar(60),
+	IsAdmin int
 	-- PasswordHash varchar(60)
 )
 

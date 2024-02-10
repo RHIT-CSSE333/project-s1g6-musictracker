@@ -2,7 +2,8 @@ CREATE OR ALTER PROCEDURE Register
 	@Username nvarchar(50),
 	@Name nvarchar(100),
 	-- @PasswordSalt varchar(60),
-	@PasswordHash varchar(60)
+	@PasswordHash varchar(60),
+	@IsAdmin int
 AS
 BEGIN
 	if @Username is null or @Username = ''
@@ -30,9 +31,9 @@ BEGIN
 	VALUES (@Username, @Name)
 	INSERT INTO [Login](UserID, Username,
 		-- PasswordSalt,
-	PasswordHash) VALUES (@@IDENTITY, @Username,
+	PasswordHash, IsAdmin) VALUES (@@IDENTITY, @Username,
 		-- @PasswordSalt,
-		@PasswordHash)
+		@PasswordHash, 0)
 	Return 0;
 END
 GO

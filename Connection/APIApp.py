@@ -20,6 +20,7 @@ blogs = Flask(__name__)
 @blogs.route("/list")
 def main():
     id = session['user_id']
+    admin = session['admin']
     mssqltips = []
     user=[]
 
@@ -31,7 +32,7 @@ def main():
     for row in result.fetchall():
         mssqltips.append({"PlaylistId": row[0], "PlaylistName": row[2], "PlaylistLength": row[3]})
     
-    return render_template("PlaylistList.html", mssqltips = mssqltips,user=user)
+    return render_template("PlaylistList.html", mssqltips = mssqltips, user=user, admin=admin)
  
 @blogs.route("/addplaylist", methods = ['GET','POST'])
 def addblog():
@@ -66,7 +67,7 @@ def suggestedSongs(id):
     cr = []
     cursor = coxn.cursor()
     if request.method == 'GET':
-        cursor.execute("SELECT TOP 64 ss.SongTitle, ss.Genre, ss.[Length], ss.BPM FROM dbo.Song ss JOIN dbo.Song ps ON ss.Genre = ps.Genre JOIN SongInPlaylist sip ON ps.SongID = sip.SongID WHERE sip.PlaylistID = ? GROUP BY ss.SongID, ss.SongTitle, ss.Genre, ss.Length, ss.BPM ORDER BY MIN(ABS(ss.BPM - ps.BPM)*ABS(ss.Length - ps.Length)) ASC" if False else "EXEC SimilarSongs @PlaylistID = ?", id)
+        cursor.execute("SELECT TOP 64 ss.SongTitle, ss.Genre, ss.[Length], ss.BPM FROM dbo.Song ss JOIN dbo.Song ps ON ss.Genre = ps.Genre JOIN SongInPlaylist sip ON ps.SongID = sip.SongID WHERE sip.PlaylistID = ? GROUP BY ss.SongID, ss.SongTitle, ss.Genre, ss.Length, ss.BPM ORDER BY MIN(ABS(ss.BPM - ps.BPM)*ABS(ss.Length - ps.Length)) ASC" if True else "EXEC SimilarSongs @PlaylistID = ?", id)
         for row in cursor.fetchall():
             cr.append({"SongTitle": row[0], "Genre": row[1], "Length": row[2], "BPM": row[3]})
         return render_template("SimilarSongs.html", tip = cr)
@@ -165,6 +166,9 @@ def loginUser():
         user = cursor.execute(
             "EXEC GetUserInfo ?", (Username)
         ).fetchone()
+        login = cursor.execute(
+            "EXEC GetAdmin ?", (Username)
+        ).fetchone()
         if user is None:
             error = "Incorrect username."
        # elif not check_password_hash(user["password"], password):
@@ -174,6 +178,7 @@ def loginUser():
             # store the user id in a new session and return to the index
             session.clear()
             session['user_id'] = user[0]
+            session['admin'] = login[0]
             return redirect('/list')
         flash(error)
         return render_template("Login.html", error=error)
@@ -193,8 +198,8 @@ def registerUser():
             "EXEC GetUserInfo ?", (RegisterUsername)
         ).fetchone()
         if user is None:
-            storedProc = 'exec [dbo].[Register] @Username = ?, @Name = ?, @PasswordHash = ?'
-            params = (RegisterUsername, RegisterName, RegisterPassword)
+            storedProc = 'exec [dbo].[Register] @Username = ?, @Name = ?, @PasswordHash = ?, @IsAdmin = ?'
+            params = (RegisterUsername, RegisterName, RegisterPassword, 0)
             cursor.execute(storedProc, params)
             cursor.commit()
             return redirect('/Login')
@@ -224,17 +229,16 @@ def AdminPage():
 def AdminAddSong():
     if request.method == 'POST':
         cursor = coxn.cursor()
-        ArtistID = request.form["ArtistID"]
-        SongID = request.form["SongID"]
+        ArtistName = request.form["ArtistName"] # ArtistName
         SongTitle = request.form["SongTitle"]
-        AlbumID = request.form["AlbumID"]
+        AlbumName = request.form["AlbumName"] #AlbumName
         Genre = request.form["Genre"]
         Length = request.form["Length"]
         BPM = request.form["BPM"]
         
 
-        storedProc = 'exec [dbo].[InsertSong] @ArtistID = ?, @SongID = ?, @SongTitle = ?, @AlbumID = ?, @Genre = ?, @Length = ?, @BPM = ?'
-        params = (ArtistID, SongID, SongTitle, AlbumID, Genre, Length, BPM)
+        storedProc = 'exec [dbo].[InsertSong] @ArtistName = ?, @SongTitle = ?, @AlbumName = ?, @Genre = ?, @Length = ?, @BPM = ?'
+        params = (ArtistName, SongTitle, AlbumName, Genre, Length, BPM)
         cursor.execute(storedProc, params)
         cursor.commit()
         return render_template("AdminAddSong.html")
@@ -246,18 +250,13 @@ def AdminAddSong():
 def AdminAddAlbum():
     if request.method == 'POST':
         cursor = coxn.cursor()
-        AlbumID = request.form["AlbumID"]
         AlbumName = request.form["AlbumName"]
         ReleaseDate = request.form["ReleaseDate"]
         ArtistName = request.form["ArtistName"]
         
-
-        storedProc = 'exec [dbo].[InsertAlbum] @AlbumID = ?, @AlbumName = ?, @ReleaseDate = ?'
-        params = (AlbumID, AlbumName, ReleaseDate)
+        storedProc = 'exec [dbo].[InsertAlbumAdmin] @AlbumName = ?, @ArtistName = ?, @ReleaseDate = ?'
+        params = (AlbumName, ArtistName, ReleaseDate)
         cursor.execute(storedProc, params)
-        storedProc2 = 'exec [dbo].[InsertAlbumArtist] @ArtistName = ?, @AlbumID = ?'
-        params2 = (ArtistName, AlbumID)
-        cursor.execute(storedProc2, params2)
         
         cursor.commit()
         return render_template("AdminAddAlbum.html")
