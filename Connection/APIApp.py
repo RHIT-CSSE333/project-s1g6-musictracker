@@ -1,7 +1,8 @@
 from flask import Flask, flash, g, render_template, redirect, request, session
 from connection import coxn
 from sqlalchemy import text
- 
+import m4util
+
 blogs = Flask(__name__)
 
 #@blogs.before_request
@@ -16,7 +17,7 @@ blogs = Flask(__name__)
   #	  g.user = (
   #		 coxn.cursor().execute("SELECT * FROM Users WHERE UserID = ?", (user_id)).fetchone()
    #	 )
- 
+
 @blogs.route("/list")
 def main():
     id = session['user_id']
@@ -30,7 +31,7 @@ def main():
     result = coxn.execute("exec GetUserPlaylists ?", id)
     
     for row in result.fetchall():
-        mssqltips.append({"PlaylistId": row[0], "PlaylistName": row[2], "PlaylistLength": row[3]})
+        mssqltips.append({"PlaylistId": row[0], "PlaylistName": row[2], "PlaylistLength": m4util.formatLength(row[3])})
     
     return render_template("PlaylistList.html", mssqltips = mssqltips, user=user, admin=admin)
  
@@ -67,9 +68,9 @@ def suggestedSongs(id):
     cr = []
     cursor = coxn.cursor()
     if request.method == 'GET':
-        cursor.execute("SELECT TOP 64 ss.SongTitle, ss.Genre, ss.[Length], ss.BPM, ss.AlbumID, SongMadeBy.ArtistID FROM dbo.Song ss JOIN dbo.Song ps ON ss.Genre = ps.Genre JOIN SongInPlaylist sip ON ps.SongID = sip.SongID JOIN SongMadeBy ON SongMadeBy.SongID = ss.SongID WHERE sip.PlaylistID = ? GROUP BY ss.SongID, ss.SongTitle, ss.Genre, ss.Length, ss.BPM ORDER BY MIN(ABS(ss.BPM - ps.BPM)*ABS(ss.Length - ps.Length)) ASC" if False else "EXEC SimilarSongs @PlaylistID = ?", id)
+        cursor.execute("SELECT TOP 64 ss.SongTitle, ss.Genre, ss.[Length], ss.BPM, ss.AlbumID, SongMadeBy.ArtistID FROM dbo.Song ss JOIN dbo.Song ps ON ss.Genre = ps.Genre JOIN SongInPlaylist sip ON ps.SongID = sip.SongID JOIN SongMadeBy ON SongMadeBy.SongID = ss.SongID WHERE sip.PlaylistID = ? GROUP BY ss.SongID, ss.SongTitle, ss.Genre, ss.Length, ss.BPM, ss.AlbumID, SongMadeBy.ArtistID ORDER BY MIN(ABS(ss.BPM - ps.BPM)*ABS(ss.Length - ps.Length)) ASC" if True else "EXEC SimilarSongs @PlaylistID = ?", id)
         for row in cursor.fetchall():
-            cr.append({"SongTitle": row[0], "Genre": row[1], "Length": row[2], "BPM": row[3], "AlbumID": row[4], "ArtistID": row[5]})
+            cr.append({"SongTitle": row[0], "Genre": row[1], "Length": m4util.formatLength(row[2]), "BPM": row[3], "AlbumID": row[4], "ArtistID": row[5]})
         return render_template("SimilarSongs.html", tip = cr)
     
 
@@ -129,7 +130,7 @@ def artistAlbums(id):
     cursor = coxn.cursor()
     cursor.execute("EXEC ArtistView ?", id)
     for row in cursor.fetchall():
-        cr.append({"AlbumID": row[0], "AlbumName": row[1], "ReleaseDate": row[2], "Length": row[3], "ArtistID": row[4]})
+        cr.append({"AlbumID": row[0], "AlbumName": row[1], "ReleaseDate": row[2], "Length": m4util.formatLength(row[3]), "ArtistID": row[4]})
     return render_template("ArtistAlbums.html", cr = cr)
 
 @blogs.route('/songManage/deleteSong/<string:songtitle>/<string:playlistname>/<int:playlistid>')
@@ -281,7 +282,7 @@ def search(id):
         result = cursor.execute("EXEC SearchResults ?",ItemName)
         for row in result.fetchall():
             mssqltips.append({"SongTitle":row[0], "ArtistName":row[1], "ArtistID":row[2], "AlbumName":row[3], 
-                              "AlbumID":row[4],"Genre": row[5], "Length":row[6],"SongID":row[6]})      
+                              "AlbumID":row[4],"Genre": row[5], "Length": m4util.formatLength(row[6]),"SongID":row[7]})
             coxn.commit()
     return render_template("Search.html",mssqltips=mssqltips,id=id)
 
@@ -297,7 +298,7 @@ def search2():
         result = cursor.execute("EXEC SearchResults ?",ItemName)
         for row in result.fetchall():
             mssqltips.append({"SongTitle":row[0], "ArtistName":row[1], "ArtistID":row[2], "AlbumName":row[3], 
-                              "AlbumID":row[4],"Genre": row[5], "Length":row[6],"SongID":row[6]})      
+                              "AlbumID":row[4],"Genre": row[5], "Length":m4util.formatLength(row[6]),"SongID":row[7]})
             coxn.commit()
     return render_template("Search2.html",mssqltips=mssqltips,)
  
