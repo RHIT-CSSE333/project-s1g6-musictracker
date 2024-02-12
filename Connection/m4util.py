@@ -6,4 +6,4 @@ def formatLength(ms):
 	elif ms >= 60 * 1000:
 		return "%d:%02d.%03d" % (ms // 60000, ms // 1000 % 60, ms % 1000)
 	else:
-		return "%d:%03d" % (ms // 1000, ms % 1000)
+		return "%d.%03d" % (ms // 1000, ms % 1000)
