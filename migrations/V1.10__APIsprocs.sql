@@ -70,9 +70,10 @@ CREATE OR ALTER PROCEDURE ArtistView (
 )
 AS
 BEGIN
-	SELECT aa.AlbumID, a.AlbumName, a.ReleaseDate, a.[Length], aa.ArtistID 
-	FROM dbo.Album a 
-	JOIN AlbumReleasedBy aa ON aa.AlbumID = a.AlbumID 
+	SELECT aa.AlbumID, a.AlbumName, a.ReleaseDate, a.[Length], aa.ArtistID, aaa.[Name] as ArtistName
+	FROM dbo.Album a
+	JOIN AlbumReleasedBy aa ON aa.AlbumID = a.AlbumID
+	JOIN Artist aaa ON aaa.ArtistID = aa.ArtistID
 	WHERE aa.ArtistID = @ArtistID
 END
 GO
@@ -91,6 +92,14 @@ CREATE OR ALTER PROCEDURE GetUserInfo (
 AS
 BEGIN
 	SELECT * FROM Login WHERE username = @Username	
+END
+GO
+CREATE OR ALTER PROCEDURE GetAdmin (
+	@Username varchar(20)
+)
+AS
+BEGIN
+	SELECT IsAdmin FROM Login WHERE username = @Username	
 END
 GO
 CREATE OR ALTER PROCEDURE SearchResults (

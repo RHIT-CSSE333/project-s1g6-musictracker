@@ -111,6 +111,9 @@ a:hover {
         </tbody>
     </table>
    <button><a href="/addplaylist">ADD PLAYLIST</a></button>
+   {% if admin == 1 %}
+   <button><a href="/AdminPage">ADMIN PAGE</a></button>
+   {% endif %}
    <button><a href="/logout">LOG OUT</a></button>
 
 </body>

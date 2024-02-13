@@ -4,10 +4,9 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE OR ALTER PROCEDURE [dbo].[InsertSong](
-	@ArtistID int,
-	@SongID nvarchar(50),
+	@ArtistName nvarchar(100),
 	@SongTitle nvarchar(200),
-	@AlbumID nvarchar(50),
+	@AlbumName nvarchar(50),
 	@Genre varchar(100),
 	@Length int,
 	@BPM decimal(18,3)
@@ -15,9 +14,21 @@ CREATE OR ALTER PROCEDURE [dbo].[InsertSong](
 AS
 BEGIN
 
-	--DECLARE @ArtistID int
-	--SELECT @ArtistID = ArtistID FROM Artist WHERE [Name] = @ArtistName
+	DECLARE @ArtistID int
+	SELECT @ArtistID = ArtistID FROM Artist WHERE [Name] = @ArtistName
 
-		INSERT INTO Song VALUES(@SongID, @SongTitle, @AlbumID, @Genre, @Length, @BPM)
-		INSERT INTO SongMadeBy VALUES(@ArtistID, @SongID)
+	DECLARE @SongID nvarchar(50)
+	DECLARE @newValue int
+	SET @newValue = 1
+
+	WHILE EXISTS (SELECT 1 FROM Song WHERE SongID = CONVERT(NVARCHAR(50), @newValue))
+	BEGIN
+		SET @newValue = @newValue + 1;
+	END
+
+	DECLARE @AlbumID nvarchar(50)
+	SELECT @AlbumID = AlbumID FROM Album WHERE AlbumName = @AlbumName
+
+		INSERT INTO Song VALUES(@newValue, @SongTitle, @AlbumID, @Genre, @Length, @BPM)
+		INSERT INTO SongMadeBy VALUES(@ArtistID, @newValue)
 END

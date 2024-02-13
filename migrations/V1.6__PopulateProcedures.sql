@@ -17,6 +17,36 @@ END
 
 GO
 
+CREATE OR ALTER PROCEDURE InsertAlbumAdmin(
+	@AlbumName nvarchar(200),
+	@ArtistName nvarchar(100),
+	@ReleaseDate nvarchar(20)
+)
+AS
+BEGIN
+
+	DECLARE @AlbumID int
+	SET @AlbumID = 1
+
+	WHILE EXISTS (SELECT 1 FROM Album WHERE AlbumID = CONVERT(NVARCHAR(50), @AlbumID))
+	BEGIN
+		SET @AlbumID = @AlbumID + 1;
+	END
+
+	--SET @AlbumID = CONVERT(NVARCHAR(50), @AlbumID)
+
+	INSERT INTO Album VALUES(@AlbumID,@AlbumName,@ReleaseDate,NULL)
+
+
+	DECLARE @ArtistID int
+	SELECT @ArtistID = ArtistID FROM Artist WHERE [Name] = @ArtistName
+
+			INSERT INTO AlbumReleasedBy VALUES(@ArtistID,@AlbumID)
+
+END
+
+GO
+
 CREATE OR ALTER PROCEDURE InsertArtist(
 	@ArtistName nvarchar(20)
 )
