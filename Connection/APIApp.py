@@ -171,7 +171,7 @@ def loginUser():
             "EXEC GetAdmin ?", (Username)
         ).fetchone()
         if user is None:
-            error = "Incorrect username."
+            error = "User does not exist."
        # elif not check_password_hash(user["password"], password):
         elif not user[2] == Password:
             error = "Incorrect password."

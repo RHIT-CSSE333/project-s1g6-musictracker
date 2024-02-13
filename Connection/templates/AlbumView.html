@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en-US" dir="ltr">
 <head>
-    <title>Song List</title>
+    <title>Album List</title>
     <style>
         /* Body styling */
     body {
@@ -88,7 +88,7 @@
 
 <body>
 	{% if cr|length > 0 %}
-		<h1>Playlist: {{cr[0].AlbumName}}</h1>
+		<h1>{{cr[0].AlbumName}}</h1>
 	{%endif%}
     <table class="table">
         <thead>
