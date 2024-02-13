@@ -88,6 +88,9 @@
 
 
 <body>
+	{% if cr|length > 0 %}
+		<h1>Playlist: {{cr[0].ArtistName}}</h1>
+	{%endif%}
     <table class="table">
         <thead>
             <tr>

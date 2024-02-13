@@ -130,7 +130,7 @@ def artistAlbums(id):
     cursor = coxn.cursor()
     cursor.execute("EXEC ArtistView ?", id)
     for row in cursor.fetchall():
-        cr.append({"AlbumID": row[0], "AlbumName": row[1], "ReleaseDate": row[2], "Length": m4util.formatLength(row[3]), "ArtistID": row[4]})
+        cr.append({"AlbumID": row[0], "AlbumName": row[1], "ReleaseDate": row[2], "Length": m4util.formatLength(row[3]), "ArtistID": row[4], "ArtistName": row[5] if len(row) > 5 else None})
     return render_template("ArtistAlbums.html", cr = cr)
 
 @blogs.route('/songManage/deleteSong/<string:songtitle>/<string:playlistname>/<int:playlistid>')
