@@ -1,3 +1,20 @@
+CREATE OR ALTER PROCEDURE InsertSong(
+	@SongID nvarchar(50),
+	@SongTitle nvarchar(200),
+	@AlbumID varchar(50),
+	@Genre varchar(100),
+	@Length int,
+	@BPM decimal(18,3)
+)
+AS
+BEGIN
+
+INSERT INTO Song VALUES(@SongID,@SongTitle,@AlbumID,@Genre,@Length,@BPM)
+
+END
+
+GO
+
 CREATE OR ALTER PROCEDURE InsertAlbum(
 	@AlbumID nvarchar(50),
 	@AlbumName nvarchar(200),
