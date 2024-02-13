@@ -21,9 +21,10 @@ public class Main {
             connection = DriverManager.getConnection(jdbcURL);
             
  
-            String insertQuery = "INSERT INTO Song VALUES (?, ?, ?, ?, ?, ?)";
-            PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
+            //String insertQuery = "INSERT INTO Song VALUES (?, ?, ?, ?, ?, ?)";
+            //PreparedStatement insertStatement = connection.prepareStatement(insertQuery);
 
+            CallableStatement insertStatement = connection.prepareCall("{CALL [InsertSong](?,?,?,?,?,?)}");
             CallableStatement insertAlbum = connection.prepareCall("{CALL [InsertAlbum](?,?,?)}");
             CallableStatement insertArtist = connection.prepareCall("{CALL [InsertArtist](?)}");
             CallableStatement insertSongArtist = connection.prepareCall("{CALL [InsertSongArtist](?,?)}");
