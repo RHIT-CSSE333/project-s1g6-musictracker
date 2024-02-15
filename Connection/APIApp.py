@@ -333,5 +333,5 @@ def search2():
 if(__name__ == "__main__"):
 
     blogs.secret_key = 'super secret key'
-    blogs.debug = True
+    blogs.debug = False
     blogs.run()
