@@ -342,5 +342,7 @@ def search2():
 if(__name__ == "__main__"):
 
     blogs.secret_key = 'super secret key'
-    blogs.debug = True
+    blogs.config['SESSION_TYPE'] = 'filesystem'
+    session.init_app(blogs)
+    blogs.debug = False
     blogs.run()
