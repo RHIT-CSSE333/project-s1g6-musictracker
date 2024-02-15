@@ -11,6 +11,15 @@
 <body>
 
     <div class="form-container">
+        {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class="flashes">
+        {% for message in messages %}
+            <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
         <!-- Login Form -->
         <form action="" method="POST">
             <h2>Song</h2>
@@ -33,19 +42,9 @@
             <input type="text" class="form-control" name="BPM" id="BPM" required>
     
             <button type="btnAdd" class="btn btn-primary">Add</button>
-            <button onclick="location.href='/'">Return</button>
+            <button onclick="location.href='/AdminPage'">Return</button>
         </form>
     </div>
 
-
-      {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul class="flashes">
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
 </body>
 </html>
