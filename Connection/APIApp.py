@@ -6,6 +6,7 @@ import pyodbc
 import m4util
 
 blogs = Flask(__name__)
+blogs.secret_key = 'super secret key'
 
 #@blogs.before_request
 #def load_logged_in_user():
@@ -331,8 +332,6 @@ def search2():
     return render_template("Search2.html",mssqltips=mssqltips,)
  
 if(__name__ == "__main__"):
-
-    blogs.secret_key = 'super secret key'
     blogs.config['SESSION_TYPE'] = 'filesystem'
     session.init_app(blogs)
     blogs.debug = False
