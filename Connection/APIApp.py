@@ -8,18 +8,6 @@ import m4util
 blogs = Flask(__name__)
 blogs.secret_key = 'super secret key'
 
-#@blogs.before_request
-#def load_logged_in_user():
- #   """If a user id is stored in the session, load the user object from
- #   the database into ``g.user``."""
- #   user_id = session.get("user_id")
-
- #   if user_id is None:
- #	   g.user = None
- #   else:
-  #	  g.user = (
-  #		 coxn.cursor().execute("SELECT * FROM Users WHERE UserID = ?", (user_id)).fetchone()
-   #	 )
 
 @blogs.route("/list")
 def main():
@@ -71,7 +59,7 @@ def suggestedSongs(id):
     cr = []
     cursor = coxn.cursor()
     if request.method == 'GET':
-        cursor.execute("SELECT TOP 64 ss.SongTitle, ss.Genre, ss.[Length], ss.BPM, ss.AlbumID, SongMadeBy.ArtistID FROM dbo.Song ss JOIN dbo.Song ps ON ss.Genre = ps.Genre JOIN SongInPlaylist sip ON ps.SongID = sip.SongID JOIN SongMadeBy ON SongMadeBy.SongID = ss.SongID WHERE sip.PlaylistID = ? GROUP BY ss.SongID, ss.SongTitle, ss.Genre, ss.Length, ss.BPM, ss.AlbumID, SongMadeBy.ArtistID ORDER BY MIN(ABS(ss.BPM - ps.BPM)*ABS(ss.Length - ps.Length)) ASC" if True else "EXEC SimilarSongs @PlaylistID = ?", id)
+        cursor.execute("EXEC SimilarSongs @PlaylistID = ?", id)
         for row in cursor.fetchall():
             cr.append({"SongTitle": row[0], "Genre": row[1], "Length": m4util.formatLength(row[2]), "BPM": row[3], "AlbumID": row[4], "ArtistID": row[5]})
         return render_template("SimilarSongs.html", tip = cr, id = id)
@@ -94,6 +82,27 @@ def manageSong(id):
     
 @blogs.route('/search/addSong/<int:id>/<string:title>', methods = ['GET','POST'])
 def addSong(id,title):
+    cursor = coxn.cursor()
+
+    try:
+        storedProc = 'exec [dbo].[AddSongToPlaylist] @PlaylistID = ?, @SongName = ?'
+        params = (id, title)
+        cursor.execute(storedProc, params)
+        coxn.commit()
+        string='/songManage/'
+        # print(string)
+        string+=str(id)
+        # print(string)
+        return redirect(string)
+    except pyodbc.Error:
+        string='/songManage/'
+        # print(string)
+        string+=str(id)
+        # print(string)
+        return redirect(string)
+    
+@blogs.route('/suggestedSongs/addSong/<int:id>/<string:title>', methods = ['GET','POST'])
+def addSuggestedSong(id,title):
     cursor = coxn.cursor()
 
     try:
