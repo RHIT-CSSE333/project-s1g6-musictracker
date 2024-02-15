@@ -4,16 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Portal</title>
+    <link rel="stylesheet" crossorigin="anonymous" href="{{ url_for('static',filename='style.css')}}">
 </head>
 <body>
 
-    <h2>Admin Portal</h2>
-
+    
+    <div class="container">
+        <h1>Admin Portal</h1>
     <!-- Button to go to Register.html -->
-    <button onclick="location.href='AddSongToDB'">Add Song</button>
+    <button onclick="location.href='AddSongToDB'" class="btn btn-primary">Add Song</button>
+    
+    
 
     <!-- Button to go to Login.html -->
-    <button onclick="location.href='AddAlbumsToDB'">Add Album</button>
+    <button onclick="location.href='AddAlbumsToDB'" class="btn btn-primary">Add Album</button>
 
+    <button onclick="location.href='/'" class="btn btn-primary">Return</button>
+        </div>
 </body>
 </html>

@@ -1,6 +1,8 @@
+from sqlite3 import IntegrityError
 from flask import Flask, flash, g, render_template, redirect, request, session
 from connection import coxn
 from sqlalchemy import text
+import pyodbc
 import m4util
 
 blogs = Flask(__name__)
@@ -71,7 +73,7 @@ def suggestedSongs(id):
         cursor.execute("SELECT TOP 64 ss.SongTitle, ss.Genre, ss.[Length], ss.BPM, ss.AlbumID, SongMadeBy.ArtistID FROM dbo.Song ss JOIN dbo.Song ps ON ss.Genre = ps.Genre JOIN SongInPlaylist sip ON ps.SongID = sip.SongID JOIN SongMadeBy ON SongMadeBy.SongID = ss.SongID WHERE sip.PlaylistID = ? GROUP BY ss.SongID, ss.SongTitle, ss.Genre, ss.Length, ss.BPM, ss.AlbumID, SongMadeBy.ArtistID ORDER BY MIN(ABS(ss.BPM - ps.BPM)*ABS(ss.Length - ps.Length)) ASC" if True else "EXEC SimilarSongs @PlaylistID = ?", id)
         for row in cursor.fetchall():
             cr.append({"SongTitle": row[0], "Genre": row[1], "Length": m4util.formatLength(row[2]), "BPM": row[3], "AlbumID": row[4], "ArtistID": row[5]})
-        return render_template("SimilarSongs.html", tip = cr)
+        return render_template("SimilarSongs.html", tip = cr, id = id)
     
 
 @blogs.route('/songManage/<int:id>', methods = ['GET','POST'])
@@ -90,30 +92,25 @@ def manageSong(id):
         return redirect('/list')
     
 @blogs.route('/search/addSong/<int:id>/<string:title>', methods = ['GET','POST'])
-
 def addSong(id,title):
     cursor = coxn.cursor()
-    
-    #     return render_template("AddSong.html", error = None)
-    # if request.method == 'POST':
-    #     SongName = request.form["SongName"]
-    #     error = None
-    #     song = cursor.execute(
-    #         "SELECT * FROM Song WHERE SongTitle = ?", (SongName)).fetchone()
-    #     if song == None:
-    #         print('ERROR')
-    #         error = 'Song does not exist'
-    #         flash(error)
-    #         return render_template("AddSong.html", error=error)
-    storedProc = 'exec [dbo].[AddSongToPlaylist] @PlaylistID = ?, @SongName = ?'
-    params = (id, title)
-    cursor.execute(storedProc, params)
-    coxn.commit()
-    string='/songManage/'
-    print(string)
-    string+=str(id)
-    print(string)
-    return redirect(string)
+
+    try:
+        storedProc = 'exec [dbo].[AddSongToPlaylist] @PlaylistID = ?, @SongName = ?'
+        params = (id, title)
+        cursor.execute(storedProc, params)
+        coxn.commit()
+        string='/songManage/'
+        # print(string)
+        string+=str(id)
+        # print(string)
+        return redirect(string)
+    except pyodbc.Error:
+        string='/songManage/'
+        # print(string)
+        string+=str(id)
+        # print(string)
+        return redirect(string)
 
 @blogs.route('/albumView/<string:id>', methods = ['GET'])
 def albumView(id):
@@ -198,21 +195,18 @@ def registerUser():
         user = cursor.execute(
             "EXEC GetUserInfo ?", (RegisterUsername)
         ).fetchone()
-        if user is None:
+        if not(user is None):
+            error = "User Already Exists"
+
+        if error is None:
+            # store the user id in a new session and return to the index
             storedProc = 'exec [dbo].[Register] @Username = ?, @Name = ?, @PasswordHash = ?, @IsAdmin = ?'
             params = (RegisterUsername, RegisterName, RegisterPassword, 0)
             cursor.execute(storedProc, params)
             cursor.commit()
             return redirect('/Login')
-           # if result != 0:
-           #	  error = "Registration Error"
-
-        #if error is None:
-            # store the user id in a new session and return to the index
-           # return redirect(url_for("index"))
-         #   return redirect('/list')
         flash(error)
-        return render_template("Register.html", error=None)
+        return render_template("Register.html", error=error)
     if request.method == 'GET':
         return render_template("Register.html")
     
@@ -236,16 +230,35 @@ def AdminAddSong():
         Genre = request.form["Genre"]
         Length = request.form["Length"]
         BPM = request.form["BPM"]
-        
 
-        storedProc = 'exec [dbo].[InsertSong] @ArtistName = ?, @SongTitle = ?, @AlbumName = ?, @Genre = ?, @Length = ?, @BPM = ?'
-        params = (ArtistName, SongTitle, AlbumName, Genre, Length, BPM)
-        cursor.execute(storedProc, params)
-        cursor.commit()
+        error = None
+        Artist = coxn.execute("exec GetArtist ?", ArtistName).fetchone()
+
+        if Artist is None:
+            error = "Artist doesn't exist"
+
+        if not(Length.isdigit()):
+            error = "Length must be an integer number"
+
+        try:
+            BPM = float(BPM)
+        except ValueError:
+             error = "BPM must be an decimal number"
+            
+
+        
+        
+        if error == None:
+            storedProc = 'exec [dbo].[InsertSong] @ArtistName = ?, @SongTitle = ?, @AlbumName = ?, @Genre = ?, @Length = ?, @BPM = ?'
+            params = (ArtistName, SongTitle, AlbumName, Genre, Length, BPM)
+            cursor.execute(storedProc, params)
+            cursor.commit()
+            return render_template("AdminPage.html")
+        flash(error)
         return render_template("AdminAddSong.html")
         
     if request.method == 'GET':
-        return render_template("AdminAddSong.html")
+        return render_template("AdminAddSong.html", error = None)
 
 @blogs.route('/AddAlbumsToDB', methods = ['GET', 'POST'])
 def AdminAddAlbum():
@@ -254,12 +267,27 @@ def AdminAddAlbum():
         AlbumName = request.form["AlbumName"]
         ReleaseDate = request.form["ReleaseDate"]
         ArtistName = request.form["ArtistName"]
+
+        error = None
+        Artist = coxn.execute("exec GetArtist ?", ArtistName).fetchone()
+
+        if Artist is None:
+            error = "Artist doesn't exist"
+
+
+        try:
+            ReleaseDate = int(ReleaseDate)
+        except ValueError:
+             error = "ReleaseDate must be an integer number in the format DDMMYEAR"
         
-        storedProc = 'exec [dbo].[InsertAlbumAdmin] @AlbumName = ?, @ArtistName = ?, @ReleaseDate = ?'
-        params = (AlbumName, ArtistName, ReleaseDate)
-        cursor.execute(storedProc, params)
-        
-        cursor.commit()
+        if error is None:
+            storedProc = 'exec [dbo].[InsertAlbumAdmin] @AlbumName = ?, @ArtistName = ?, @ReleaseDate = ?'
+            params = (AlbumName, ArtistName, ReleaseDate)
+            cursor.execute(storedProc, params) 
+            cursor.commit()
+            return render_template("AdminAddAlbum.html")
+
+        flash(error)
         return render_template("AdminAddAlbum.html")
     if request.method == 'GET':
         return render_template("AdminAddAlbum.html")
@@ -275,7 +303,7 @@ def logout():
 def search(id):
     mssqltips = []
     if request.method == 'GET':
-        return render_template("Search.html",mssqltips=mssqltips)
+        return render_template("Search.html",mssqltips=mssqltips, id=id)
     if request.method == 'POST':
         cursor = coxn.cursor()
         ItemName = request.form["ItemName"]
@@ -290,7 +318,7 @@ def search(id):
 def search2():
     mssqltips = []
     if request.method == 'GET':
-        return render_template("Search.html",mssqltips=mssqltips)
+        return render_template("Search2.html",mssqltips=mssqltips)
     if request.method == 'POST':
         cursor = coxn.cursor()
         ItemName = request.form["ItemName"]

@@ -6,6 +6,28 @@ BEGIN
 	SELECT [Name] FROM Users WHERE UserID = @UserID
 END
 GO
+CREATE OR ALTER PROCEDURE GetArtist (
+	@ArtistName nvarchar(100)
+)
+AS
+BEGIN
+
+	SELECT [Name] FROM Artist WHERE [Name] = @ArtistName
+END
+GO
+CREATE OR ALTER PROCEDURE GetSongInPlaylist (
+	@PlaylistID int,
+	@SongName nvarchar(200)
+)
+AS
+BEGIN
+	
+	DECLARE @SongID nvarchar(50);
+	SET @SongID = (SELECT 1 FROM Song WHERE SongID = @SongID)
+
+	SELECT 1 FROM SongInPlaylist WHERE SongID = @SongID AND PlaylistID = @PlaylistID
+END
+GO
 CREATE OR ALTER PROCEDURE GetUserPlaylists (
 	@UserID int
 )
