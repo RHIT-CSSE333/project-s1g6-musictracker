@@ -259,7 +259,7 @@ def AdminAddSong():
         
         
         if error == None:
-            storedProc = 'exec [dbo].[InsertSong] @ArtistName = ?, @SongTitle = ?, @AlbumName = ?, @Genre = ?, @Length = ?, @BPM = ?'
+            storedProc = 'exec [dbo].[InsertSong2] @ArtistName = ?, @SongTitle = ?, @AlbumName = ?, @Genre = ?, @Length = ?, @BPM = ?'
             params = (ArtistName, SongTitle, AlbumName, Genre, Length, BPM)
             cursor.execute(storedProc, params)
             cursor.commit()

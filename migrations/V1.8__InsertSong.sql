@@ -3,7 +3,7 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
-CREATE OR ALTER PROCEDURE [dbo].[InsertSong](
+CREATE OR ALTER PROCEDURE [dbo].[InsertSong2](
 	@ArtistName nvarchar(100),
 	@SongTitle nvarchar(200),
 	@AlbumName nvarchar(50),
