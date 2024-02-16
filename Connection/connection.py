@@ -4,7 +4,7 @@ import urllib
 import pyodbc
 
 SERVER = 'golem.csse.rose-hulman.edu'
-DATABASE = 'MusicTracker-deckertct'
+DATABASE = 'MusicTracker-halseysh'
 USERNAME = 'deckerct'
 PASSWORD = 'RedParade2023'
 TrustServerCertificate = 'yes'
